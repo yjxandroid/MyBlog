@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>YJX&#39;S Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description">
+<meta property="og:type" content="website">
+<meta property="og:title" content="YJX'S Blog">
+<meta property="og:url" content="http://yoursite.com/index.html">
+<meta property="og:site_name" content="YJX'S Blog">
+<meta property="og:description">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="YJX'S Blog">
+<meta name="twitter:description">
+  
+    <link rel="alternative" href="/atom.xml" title="YJX&#39;S Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+
+</head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">YJX&#39;S Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="q" value="site:http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main">
+  
+    <article id="post-第四篇-android RecyclerView下拉隐藏Toolbar,上拉显示" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/06/01/第四篇-android RecyclerView下拉隐藏Toolbar,上拉显示/" class="article-date">
+  <time datetime="2015-05-31T16:18:34.000Z" itemprop="datePublished">2015-06-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Android应用开发/">Android应用开发</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/06/01/第四篇-android RecyclerView下拉隐藏Toolbar,上拉显示/">RecyclerView下拉隐藏Toolbar,上拉显示</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="RecyclerView下拉隐藏Toolbar,上拉显示效果图">RecyclerView下拉隐藏Toolbar,上拉显示效果图</h1><h6 id="先说个事：最近我准备做个开源的博客园android客户端！符合Google最新的material_design设计风格的！不知道有没有小伙伴愿意和我一起做呢？如果有愿意的，请私信我哦！！！！我还打算每天直播我们工作的进度,代码，以及BUG等！！">先说个事：最近我准备做个开源的博客园android客户端！符合Google最新的material design设计风格的！不知道有没有小伙伴愿意和我一起做呢？如果有愿意的，请私信我哦！！！！我还打算每天直播我们工作的进度,代码，以及BUG等！！</h6><p><br><br><br></p>
+<p>   <img src="http://ww3.sinaimg.cn/large/a174c633gw1ergw9n25p5g20a006oq8p.gif" alt="效果图"></p>
+<h1 id="分析">分析</h1><p>1.首先看toolbar的滚动，肯定用属性动画(没得说)</p>
+<p>2.toolbar何时滚动？从动图中我们可以看到是用户向下滑动一定的距离之后才消失，出现反之！注意:这边的距离手我们控制随意</p>
+<p>3.大家不知道注意了了没，就是在toolbar完全隐藏的时候，我们的RecyclerView是完全显示的，并没有距离顶部一个toolbar的高度！！这个地方实现有点取巧 我会在下面的代码中说明！！</p>
+<h1 id="代码实现">代码实现</h1><p>1.首先来为toolbar实现隐藏和显示的两个动画，在这里 我就定义两个函数来分别实现这两个动画。代码过于简单我就直接上代码了：</p>
+<p><img src="http://ww2.sinaimg.cn/large/a174c633gw1ergxd0zr7jj20op08q402.jpg" alt="代码"></p>
+<p>2.现在我们只要监听RecyclerView的滚动事件来控制toolbar的显示与隐藏就行了！。我简单的来说一下思路：当用户向下滑动一定的距离（这个距离我们人为控制），当滑动的距离超过这个距离且当前的toolbar是显示的，就隐藏！反之显示。但是在这里我们要注意下这个问题：就是这个滑动距离怎么算？<br>  我们先来看一下recyclerview的滑动监听函数RecyclerView.OnScrollListener他有两个回调函数 我们只要关注其中的一个就行啦!就是这个：<br>  <img src="http://ww4.sinaimg.cn/large/a174c633gw1ergxnri5q5j20kl01kmxa.jpg" alt="函数"><br>  其中dy就表示垂直方向的滑动距离！了解玩这个之后 我就来看代码</p>
+<p>  <img src="http://ww2.sinaimg.cn/large/a174c633gw1ergxptl0zmj20sr0dmdiv.jpg" alt="代码"><br> 在这里，我首先是判断是了当前页面的第一个显示的是否是列表中的第一个，如果是就显示toolbar！另外我还定义了两个变量<br> isshow和disy，分别表示toolbar是否显示和滑动的总距离。还有个细节要注意下 就是当你触发到某种状态之后 disy一定要清零啊！！切记切记！！！另外，这个disy的总滑动距离的计算方式也要注意下！</p>
+<p> 3.到第二步为止，就可以正常的滑动隐藏啦！！（RecyclerView的Adaper自己写啊！！）。要实现效果图中的效果 我们还差几步！首先呢 ，我们在布局文件上取点巧，就是用FrameLayout作为父控件布局!看xml布局文件：<br> <img src="http://ww4.sinaimg.cn/large/a174c633gw1ergy3ckv6hj20hz0aogoa.jpg" alt="xml布局"></p>
+<p>大家可以看到其实recyclerview还是充满屏幕的 那个toolbar只是我们叠在上面的！OK，布局文件取巧完了，我们再来取巧下Adapter！大家应该知道在适配器中有这么个方法： public int getItemViewType(int position) 就是根据位置不同返回不同的ViewType 当然这个ViewType是我们自己定义 在一般的列表中我们的item view都是相同的，但是有时候会有不相同的view在同一个列表中，此时我么就用到这个方法啦！我现在的解决方案呢，就是在第一个View中添加一个和toolbar相同的view,那么在正常的显示的时候 列表的第一个能被用户看到 而不是被toolbar遮挡住了！！！现在就请大家看一下适配器的代码吧！</p>
+<p><img src="http://ww4.sinaimg.cn/large/a174c633gw1ergzmi0gxnj20vn0hyjws.jpg" alt="代码"></p>
+<p><img src="http://ww4.sinaimg.cn/large/a174c633gw1ergzn0iq7tj20gj08jq47.jpg" alt="代码"></p>
+<p>上面两段代码 就是适配器的全部代码了 ！很简单的！大家一看就会拉！！！</p>
+<p>好了 今天就讲到这儿吧！！！</p>
+<p>欢迎大家评论啊！！！！！！！！！！！！！！！！！！！！！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/06/01/第四篇-android RecyclerView下拉隐藏Toolbar,上拉显示/" data-id="ciacnw8ek00013bm90hxb81ph" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-第十篇-android 中替代 sharedpreferences 工具类的实现" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/06/01/第十篇-android 中替代 sharedpreferences 工具类的实现/" class="article-date">
+  <time datetime="2015-05-31T16:18:12.000Z" itemprop="datePublished">2015-06-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Android应用开发/">Android应用开发</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/06/01/第十篇-android 中替代 sharedpreferences 工具类的实现/">Android 中替代 sharedpreferences 工具类的实现</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Android_中替代_sharedpreferences_工具类的实现">Android 中替代 sharedpreferences 工具类的实现</h1><h2 id="背景">背景</h2><p>想必大家一定用过 sharedpreferences 吧！就我个人而言，特别讨厌每次 put 完数据还要 commit。对 我就是这么懒！哈哈。另外，sharedpreferences 不能存类，集合和bitmap等数据！这点也让人非常不爽啊！所以，我就在这个美好的星期天撸了名为 SHARE 的工具类用来替代 sharedpreferences。</p>
+<hr>
+<h2 id="项目介绍">项目介绍</h2><h3 id="整体架构">整体架构</h3><p>先来看一下，整体架构图（画的不好请大家见谅）:</p>
+<p><img src="http://ww4.sinaimg.cn/large/a174c633gw1esfdojri3oj20f009gabi.jpg" alt="图片"></p>
+<p>从图中，我们可以了解到,当我们 put 数据的时候，我们同时存入到 内存和和sd卡中。读取的时候，优先从内存中获取，如果内存中没有，则从sd中获取。如果两者都没有，则使用用户自己设置的默认值！</p>
+<h3 id="代码介绍">代码介绍</h3><p>下来看一下代码目录结构：<br><img src="http://ww1.sinaimg.cn/large/a174c633gw1esffncc9wdj20hj049jrl.jpg" alt="图片"></p>
+<ul>
+<li>DiskLruCache:硬盘缓存的解决方案(非Google官方编写，但获得官方认证。<a href="android.googlesource.com/platform/libcore/+/jb-mr2-release/luni/src/main/java/libcore/io/DiskLruCache.java">地址</a>)</li>
+<li>Cache:接口。抽象了对数据的操作</li>
+<li>MemoryCache:内存缓存，实现了Cache接口</li>
+<li>DiskCache:硬盘缓存，同样实现了Cache接口</li>
+<li>Share:这个类就是我们使用的！他主要是提供了 put 和 get两种方法！其实就是对 MemoryCache 和 DiskCache 两个类的操作！</li>
+</ul>
+<h3 id="使用">使用</h3><p>在 Application中初始化:</p>
+<pre><code>@Override
+<span class="keyword">public</span> <span class="keyword">void</span> onCreate() {
+    <span class="keyword">super</span>.onCreate();
+    <span class="keyword">File</span> <span class="keyword">file</span> = <span class="keyword">new</span> <span class="keyword">File</span>(Environment.getExternalStorageDirectory().toString() + <span class="keyword">File</span>.separator + <span class="string">"sample"</span>);
+    <span class="keyword">if</span> (!<span class="keyword">file</span>.exists()) {
+        <span class="keyword">file</span>.mkdirs();
+    }
+    Share.init(<span class="string">"CACHE"</span>, <span class="number">10</span> * <span class="number">1024</span>, <span class="keyword">file</span>.toString());
+}
+</code></pre><p>之后，你就可以任意的使用它了！</p>
+<pre><code><span class="comment">//设置字符串</span>
+Share.putString(<span class="string">"str"</span>, <span class="string">"你好啊"</span>);
+<span class="comment">//设置int</span>
+Share.putInt(<span class="string">"int"</span>, <span class="number">1</span>);
+<span class="comment">//设置boolean</span>
+Share.putBoolean(<span class="string">"boolean"</span>, <span class="keyword">true</span>);
+<span class="comment">//设置double</span>
+Share.putDouble(<span class="string">"double"</span>, <span class="number">2.1</span>d);
+<span class="comment">//设置long</span>
+Share.putLong(<span class="string">"long"</span>, <span class="number">20000</span>);
+<span class="comment">//设置flot</span>
+Share.putFloat(<span class="string">"float"</span>, <span class="number">2.2f</span>);
+<span class="comment">//设置类</span>
+Share.putObject(<span class="string">"obj"</span>, people);
+Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.dd);
+<span class="comment">//设置bitmap</span>
+Share.putBitmap(<span class="string">"bitmap"</span>, bitmap);
+<span class="comment">//设置集合</span>
+Share.putObject(<span class="string">"list"</span>, items);
+</code></pre><hr>
+<pre><code><span class="comment">//得到字符串</span>
+<span class="keyword">String</span> <span class="built_in">str</span>=Share.getString(<span class="string">"str"</span>);
+<span class="comment">//得到double</span>
+<span class="keyword">double</span> dd=Share.getDouble(<span class="string">"double"</span>, <span class="number">0.0</span>d);
+<span class="comment">//得到int</span>
+<span class="built_in">int</span> value=Share.getInt(<span class="string">"int"</span>, <span class="number">0</span>);
+<span class="comment">//得到float</span>
+<span class="built_in">float</span> ff=Share.getFloat(<span class="string">"float"</span>, <span class="number">0.0</span>f);
+<span class="comment">//得到bitmap</span>
+Bitmap <span class="built_in">map</span>=Share.getBitmap(<span class="string">"bitmap"</span>);
+<span class="comment">//得到集合</span>
+List&lt;<span class="keyword">String</span>&gt; <span class="built_in">copy</span>= (List&lt;<span class="keyword">String</span>&gt;) Share.getObject(<span class="string">"list"</span>);
+.....
+</code></pre><p>使用就是如此简单！</p>
+<h3 id="近期要完成的新功能">近期要完成的新功能</h3><p>1.增加异步 get 和 put.</p>
+<p>2.对泛型的支持.</p>
+<hr>
+<h2 id="项目地址">项目地址</h2><ul>
+<li><a href="https://github.com/yjxandroid/SHARE" target="_blank" rel="external">GitHub</a></li>
+</ul>
+<p>希望这个项目对大家有用。也希望多 star .同时也能多多提出修改意见！不管是对项目本身还是代码！！！！可以在github上也可以在本篇博客下评论。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/06/01/第十篇-android 中替代 sharedpreferences 工具类的实现/" data-id="ciacnw8em00023bm9spfk88cb" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-第十一篇-android_design_support_library 中控件的使用简单介绍" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/06/01/第十一篇-android_design_support_library 中控件的使用简单介绍/" class="article-date">
+  <time datetime="2015-05-31T16:17:57.000Z" itemprop="datePublished">2015-06-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Android应用开发/">Android应用开发</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/06/01/第十一篇-android_design_support_library 中控件的使用简单介绍/">Android Design Support Library 中控件的使用简单介绍（一）</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Android_Design_Support_Library_中控件的使用简单介绍（一）">Android Design Support Library 中控件的使用简单介绍（一）</h1><hr>
+<h2 id="介绍">介绍</h2><p>在这个 Lib 中主要包含了 8 个新的 material design 组件！最低支持 Android 2.1 。 这些组件在我看来就是对 Github中最近比较火的 android 组件进行了封装！！</p>
+<hr>
+<h2 id="下载">下载</h2><p>要使用这个库，当然得先下载啦！（<em>没有翻墙的同学肯定已经哭晕在厕所了！！</em>）这里我给童鞋们，提供一个简单的方法：<br>就是使用 <a href="http://honx.in/guide?account=18602590523#/" target="_blank" rel="external">红杏</a> 提供的公益代理！具体使用方法如下图：</p>
+<p><img src="http://ww3.sinaimg.cn/large/a174c633gw1esmplpx4hzj20t80iy76l.jpg" alt="图片"></p>
+<p>之后就是使用 Android SDK Manager 更新下载了！！</p>
+<hr>
+<h2 id="使用">使用</h2><h3 id="第一步—引用">第一步—引用</h3><p>引用这个库：在<code>build.gradle</code>文件中加上这段代码：<code>compile &#39;com.android.support:design:22.2.0</code></p>
+<h3 id="第二步—具体控件的使用">第二步—具体控件的使用</h3><h4 id="TextInputLayout">TextInputLayout</h4><p>以前当我们使用 EditText 这个组件的  hint 属性的时候，当用户输入第一个字母之后，这个 hint 中的文本就会消失！有点影响用户体验！但是现在不一样了！现在只要把 EditText 包含在 TextInputLayout 中，这个 hint 中的文本就会变成 floating lable 浮动在 EditText 上方！同时，也支持在 EditText 下方显示错误信息好了，我么先来看一下 TextInputLayout 这个控件的公共方法吧！  </p>
+<p><img src="http://ww4.sinaimg.cn/large/a174c633gw1esmqg4erjsj20sm0a6myt.jpg" alt="方法"></p>
+<p>想必大家也能看明白 (我在有的函数解释下)</p>
+<ul>
+<li><code>getEditText()</code> 得到控件中包含的 EditText 控件</li>
+<li><code>setError(CharSequence error)</code> 设置错误信息并显示在 EditText 下方 应用场景：比如用户输错了密码或者用户名等</li>
+<li><p><code>setHint(CharSequence hint)</code> 设置提示信息</p>
+</li>
+<li><p><code>setErrorEnabled(boolean enabled)</code> 设置 <code>setError(CharSequence error)</code> 这个函数是否可用 记住哦：这个函数一定要在 <code>setError(CharSequence error)</code> 这个函数之后执行哦！具体原因 大家可以去看源码哦！</p>
+</li>
+</ul>
+<p>现在我们先在布局文件中布局：</p>
+<pre><code>   &lt;android<span class="class">.support</span><span class="class">.design</span><span class="class">.widget</span><span class="class">.TextInputLayout</span>
+    android:layout_width=<span class="string">"match_parent"</span>
+    android:layout_height=<span class="string">"wrap_content"</span>
+    android:orientation=<span class="string">"vertical"</span>
+    android:id=<span class="string">"@+id/textinput"</span>&gt;
+    &lt;EditText
+        android:layout_marginTop=<span class="string">"4dp"</span>
+        android:layout_width=<span class="string">"match_parent"</span>
+        android:layout_height=<span class="string">"48dp"</span>/&gt;
+&lt;/android<span class="class">.support</span><span class="class">.design</span><span class="class">.widget</span><span class="class">.TextInputLayout</span>&gt;
+</code></pre><p>很简单就是一个嵌套！我们接下来 <code>onCreate(Bundle savedInstanceState)</code> 方法中的代码：</p>
+<pre><code><span class="annotation">@Override</span>
+<span class="keyword">protected</span> <span class="function"><span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>{
+    <span class="keyword">super</span>.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_main);
+    textinput = (TextInputLayout) findViewById(R.id.textinput);
+    et_content = textinput.getEditText();
+    textinput.setHint(<span class="string">"请输入用户名"</span>);
+    textinput.setError(<span class="string">"密码输入错啦！"</span>);
+    textinput.setErrorEnabled(<span class="keyword">true</span>);<span class="comment">//当设置成false的时候 错误信息不显示 反之显示</span>
+}
+</code></pre><p>代码很简单 不细说！大家直接看效果图：  </p>
+<p><img src="http://ww1.sinaimg.cn/large/a174c633gw1esmt5fq3klj20c103t749.jpg" alt="效果图"></p>
+<h4 id="FloatingActionButton">FloatingActionButton</h4><p>由于这个控件相对简单！我就直接在上面的那个布局中增加这个按钮，并把它显示在右边！</p>
+<pre><code>&lt;android.support.design.widget.FloatingActionButton
+   android:<span class="variable">id=</span><span class="string">"@+id/button"</span>
+   android:<span class="variable">layout_width=</span><span class="string">"48dp"</span>
+   android:<span class="variable">layout_gravity=</span><span class="string">"right"</span>
+   android:<span class="variable">layout_height=</span><span class="string">"48dp"</span>
+   android:<span class="variable">orientation=</span><span class="string">"vertical"</span> /&gt;
+</code></pre><p>接着我们在看代码区域：</p>
+<pre><code><span class="keyword">button</span>.setRippleColor(Color.GRAY);<span class="comment">//设置按下去的波纹颜色</span>
+<span class="keyword">button</span>.setBackgroundDrawable(getResources().getDrawable(android.R.drawable.ic_menu_add));<span class="comment">//背景色</span>
+</code></pre><p>不解释了简单！</p>
+<h4 id="Snackbar">Snackbar</h4><p>和 Toast 类似。但是它有简单的可选择的单个的Action。 同时还有个特性就是用户可以在它消失时间未到的时候，移掉它！<br>现在来介绍下 Snackbar 的一些函数</p>
+<ul>
+<li><code>dismiss()</code> 用来消失 Snackbar 的</li>
+<li><code>getDuration()</code> 得到显示时长的</li>
+<li><code>make(View view, int resId, int duration)</code> 创建 Snackbar 的</li>
+<li><code>make(View view, CharSequence text, int duration)</code> 和上面一样</li>
+<li><code>setAction(int resId, View.OnClickListener listener)</code> 对 Snackbar 设置单击时间，这里的单击时间不是作用于整个 Snackbar 的，还是作用于你所设置的这个字段的，也就是这个 <code>resId</code></li>
+<li><code>setAction(CharSequence text, View.OnClickListener listener)</code> 和上面一样</li>
+<li><code>setActionTextColor(ColorStateList colors)</code> 设置动作字的颜色，就是对上面的setAction 中文字颜色的设置</li>
+<li><code>setActionTextColor(int color)</code> 和上面一样</li>
+<li><code>setDuration(int duration)</code> 设置 Snackbar 显示时常</li>
+<li><code>setText(int resId)</code> 更新 Snackbar 中的文本</li>
+<li><code>setText(CharSequence message)</code> 和上面一样</li>
+<li><code>show()</code> 显示 Snackbar</li>
+</ul>
+<p>函数已经介绍完了！现在，我会FloatingActionButton增加一个单击事件用来显示 Snackbar 。直接看代码：</p>
+<pre><code>button.setOnClickListener(<span class="keyword">new</span> View.OnClickListener() {
+       <span class="annotation">@Override</span>
+       <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>{
+           Snackbar
+                   .make(content, <span class="string">"你好啊"</span>, Snackbar.LENGTH_LONG)
+                   .setAction(<span class="string">"delete"</span>, <span class="keyword">new</span> View.OnClickListener() {
+                       <span class="annotation">@Override</span>
+                       <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">onClick</span><span class="params">(View v)</span> </span>{
+                           Toast.makeText(MainActivity.<span class="keyword">this</span>, <span class="string">"delete"</span>, Toast.LENGTH_SHORT).show();
+                       }
+                   })
+                   .show();
+       }
+   });
+</code></pre><p>直接看效果吧！</p>
+<p><img src="http://ww2.sinaimg.cn/large/a174c633gw1esmu9ljskrg20f00qo0xw.gif" alt="效果图"></p>
+<h4 id="Tabs">Tabs</h4><p>选项卡，一般和 TabLayout 一起使用哦。现在我们来看一下 TabLayout 的一些函数。</p>
+<ul>
+<li><code>addTab(TabLayout.Tab tab, int position, boolean setSelected)</code> 增加选项卡到 layout 中</li>
+<li><code>addTab(TabLayout.Tab tab, boolean setSelected)</code> 同上</li>
+<li><code>addTab(TabLayout.Tab tab)</code> 同上</li>
+<li><code>getTabAt(int index)</code> 得到选项卡</li>
+<li><code>getTabCount()</code> 得到选项卡的总个数</li>
+<li><code>getTabGravity()</code> 得到 tab 的 Gravity</li>
+<li><code>getTabMode()</code> 得到 tab 的模式</li>
+<li><code>getTabTextColors()</code> 得到 tab 中文本的颜色</li>
+<li><code>newTab()</code> 新建个 tab</li>
+<li><code>removeAllTabs()</code> 移除所有的 tab</li>
+<li><code>removeTab(TabLayout.Tab tab)</code> 移除指定的 tab</li>
+<li><code>removeTabAt(int position)</code> 移除指定位置的 tab</li>
+<li><code>setOnTabSelectedListener(TabLayout.OnTabSelectedListener onTabSelectedListener)</code> 为每个 tab 增加选择监听器</li>
+<li><code>setScrollPosition(int position, float positionOffset, boolean updateSelectedText)</code> 设置滚动位置</li>
+<li><code>setTabGravity(int gravity)</code> 设置 Gravity</li>
+<li><code>setTabMode(int mode)</code> 设置 Mode</li>
+<li><code>setTabTextColors(ColorStateList textColor)</code> 设置 tab 中文本的颜色</li>
+<li><code>setTabTextColors(int normalColor, int selectedColor)</code> 设置 tab 中文本的颜色 默认 选中</li>
+<li><code>setTabsFromPagerAdapter(PagerAdapter adapter)</code> 设置 PagerAdapter</li>
+<li><code>setupWithViewPager(ViewPager viewPager)</code> 和 ViewPager 联动</li>
+</ul>
+<p>函数介绍完了，现在来看代码吧！<br>布局代码：  </p>
+<pre><code>&lt;android<span class="class">.support</span><span class="class">.design</span><span class="class">.widget</span><span class="class">.TabLayout</span>
+  android:id=<span class="string">"@+id/tablayout"</span>
+  android:layout_width=<span class="string">"match_parent"</span>
+  android:<span class="attribute">background</span>=<span class="string">"#1FBCD2"</span>
+  android:layout_height=<span class="string">"48dp"</span> /&gt;
+</code></pre><p>再来看一下 <code>onCreate(Bundle savedInstanceState)</code> 中的方法吧  </p>
+<pre><code> <span class="variable">@Override</span>
+ protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.<span class="keyword">layout</span>.activity_tab);
+    <span class="keyword">tabLayout</span>= (TabLayout) findViewById(R.id.tablayout);
+    <span class="keyword">tabLayout</span>.setTabTextColors(Color.WHITE, Color.GRAY);<span class="comment">//设置文本在选中和为选中时候的颜色</span>
+    <span class="keyword">tabLayout</span>.addTab(<span class="keyword">tabLayout</span>.newTab().setText(<span class="string">"第一个"</span>), true);<span class="comment">//添加 Tab,默认选中</span>
+    <span class="keyword">tabLayout</span>.addTab(<span class="keyword">tabLayout</span>.newTab().setText(<span class="string">"第二个"</span>),false);<span class="comment">//添加 Tab,默认不选中</span>
+    <span class="keyword">tabLayout</span>.addTab(<span class="keyword">tabLayout</span>.newTab().setText(<span class="string">"第三个"</span>),false);<span class="comment">//添加 Tab,默认不选中</span>
+}
+</code></pre><p>来看一下效果吧<br><img src="http://ww3.sinaimg.cn/large/a174c633gw1esnbs1ggkpg20f00qogqd.gif" alt="效果图"></p>
+<p>现在 我们来把 TabLayout 和 ViewPager 连起来用<br>先看布局文件 我们在上面的基础上加了个ViewPager  </p>
+<pre><code>&lt;android<span class="class">.support</span><span class="class">.design</span><span class="class">.widget</span><span class="class">.TabLayout</span>
+    android:id=<span class="string">"@+id/tablayout"</span>
+    android:layout_width=<span class="string">"match_parent"</span>
+    android:<span class="attribute">background</span>=<span class="string">"#1FBCD2"</span>
+    android:layout_height=<span class="string">"48dp"</span> /&gt;
+
+&lt;android<span class="class">.support</span><span class="class">.v4</span><span class="class">.view</span><span class="class">.ViewPager</span>
+    android:id=<span class="string">"@+id/vp"</span>
+    android:layout_width=<span class="string">"match_parent"</span>
+    android:layout_height=<span class="string">"match_parent"</span> /&gt;
+</code></pre><p>再来看一下 <code>onCreate(Bundle savedInstanceState)</code> 中的方法吧  </p>
+<pre><code><span class="annotation">@Override</span>
+<span class="keyword">protected</span> <span class="function"><span class="keyword">void</span> <span class="title">onCreate</span><span class="params">(Bundle savedInstanceState)</span> </span>{
+    <span class="keyword">super</span>.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_tab);
+    tvs = <span class="keyword">new</span> ArrayList&lt;TextView&gt;();
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; items.length; i++) {
+        TextView tv = <span class="keyword">new</span> TextView(<span class="keyword">this</span>);
+        tv.setText(items[i]);
+        LinearLayout.LayoutParams lp =
+                <span class="keyword">new</span> LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+        tv.setTextColor(Color.BLACK);
+        tv.setBackgroundColor(Color.WHITE);
+        tv.setGravity(Gravity.CENTER);
+        tv.setLayoutParams(lp);
+        tv.setTextSize(<span class="number">22</span>);
+        tvs.add(tv);
+    }
+    tabLayout = (TabLayout) findViewById(R.id.tablayout);
+    tabLayout.setTabTextColors(Color.WHITE, Color.GRAY);<span class="comment">//设置文本在选中和为选中时候的颜色</span>
+    vp = (ViewPager) findViewById(R.id.vp);
+    adapter = <span class="keyword">new</span> Adapter();
+    vp.setAdapter(adapter);
+
+    <span class="comment">//用来设置tab的，同时也要覆写  PagerAdapter 的 CharSequence getPageTitle(int position) 方法，要不然 Tab 没有 title</span>
+    tabLayout.setupWithViewPager(vp);
+    <span class="comment">//关联 TabLayout viewpager</span>
+    tabLayout.setTabsFromPagerAdapter(adapter);
+}
+</code></pre><p>看效果图：<br><img src="http://ww4.sinaimg.cn/large/a174c633gw1esnce76tywg20f00qoagz.gif" alt="图"></p>
+<h4 id="Navigation_View">Navigation View</h4><p>大家都记得 DrawerLayout 这个控件吧！它是 android 用来体态 SlideMenu 的一个组件！在这个控件中我们通常需要一个 menu（也是个布局文件）和一个主体布局文件。现在这个 Navigation View 就是用来写 menu的！<br>这个控件我就不一一写函数了！我们还是直接使用吧！直接看布局文件</p>
+<pre><code>&lt;android.support.v4.widget.DrawerLayout xmlns:<span class="variable">android=</span><span class="string">"http://schemas.android.com/apk/res/android"</span>
+    xmlns:<span class="variable">app=</span><span class="string">"http://schemas.android.com/apk/res-auto"</span>
+    android:<span class="variable">id=</span><span class="string">"@+id/drawer_layout"</span>
+    android:<span class="variable">layout_width=</span><span class="string">"match_parent"</span>
+    android:<span class="variable">layout_height=</span><span class="string">"match_parent"</span>
+    android:<span class="variable">fitsSystemWindows=</span><span class="string">"true"</span>&gt;
+
+    &lt;FrameLayout
+        android:<span class="variable">layout_width=</span><span class="string">"match_parent"</span>
+        android:<span class="variable">layout_height=</span><span class="string">"match_parent"</span>&gt;
+        &lt;TextView
+            android:<span class="variable">layout_width=</span><span class="string">"match_parent"</span>
+            android:<span class="variable">layout_height=</span><span class="string">"match_parent"</span>
+            android:<span class="variable">text=</span><span class="string">"哈哈"</span>
+            android:<span class="variable">gravity=</span><span class="string">"center"</span>
+            android:<span class="variable">textSize=</span><span class="string">"30sp"</span>
+            android:<span class="variable">textColor=</span><span class="string">"@android:color/background_dark"</span>/&gt;
+    &lt;/FrameLayout&gt;
+    &lt;android.support.design.widget.NavigationView
+        android:<span class="variable">id=</span><span class="string">"@+id/navigation"</span>
+        android:<span class="variable">layout_width=</span><span class="string">"wrap_content"</span>
+        android:<span class="variable">layout_height=</span><span class="string">"match_parent"</span>
+        android:<span class="variable">layout_gravity=</span><span class="string">"start"</span>
+        app:<span class="variable">headerLayout=</span><span class="string">"@layout/header"</span>
+        app:<span class="variable">menu=</span><span class="string">"@menu/my_navigation_items"</span> /&gt;
+&lt;/android.support.v4.widget.DrawerLayout&gt;
+</code></pre><p>我们直接看 NavigationView ，会发现我使用了两个新的属性 <code>app:headerLayout</code> 和 <code>app:menu</code> 这是因为这个组件把menu分为两部分，一个是头部还有一个是 menu。现在我们只需要写个新的头部和一个 menu就行啦！！这个组件我就不上图了！主要是我认为没啥意思这个组件！</p>
+<h3 id="剩下的组件">剩下的组件</h3><p>现在还剩下 <code>CoordinatorLayout</code> , <code>CollapsingToolbarLayout</code> 和 <code>AppBarLayout</code> 这三个组件！由于我对这个三个组件还没有仔细研究，在这篇博文中就不说了！下篇博文再讲！！</p>
+<ul>
+<li><a href="http://developer.android.com/intl/zh-cn/reference/android/support/design/widget/CoordinatorLayout.html?utm_campaign=io15&amp;utm_source=dac&amp;utm_medium=blog" target="_blank" rel="external">CoordinatorLayout</a> 是一个超级 FrameLayout</li>
+<li><a href="http://developer.android.com/intl/zh-cn/reference/android/support/design/widget/CollapsingToolbarLayout.html?utm_campaign=io15&amp;utm_source=dac&amp;utm_medium=blog" target="_blank" rel="external">CollapsingToolbarLayout</a> 类似<a href="http://ww2.sinaimg.cn/large/610dc034gw1eslfqhnn1lg208w08whdt.gif" target="_blank" rel="external">这张图</a></li>
+<li><a href="http://developer.android.com/intl/zh-cn/reference/android/support/design/widget/AppBarLayout.html" target="_blank" rel="external">AppBarLayout</a> 全新，用来实现各种 Material Design 概念效果的一个 Layout，主要负责对滑动的响应</li>
+</ul>
+<p>以上三个组件的来自 <a href="https://github.com/daimajia" target="_blank" rel="external">代码家</a> 的这篇博文 <a href="http://www.jianshu.com/p/4f7f55471da2" target="_blank" rel="external">Google I/O 2015 为 Android 开发者带来了哪些福利？</a> 的解释！</p>
+<h4 id="结束语">结束语</h4><p> <strong><em>不知道大家有没有好的 unity3d 学习方面的资料 求介绍啊 ！！！！！！</em></strong></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/06/01/第十一篇-android_design_support_library 中控件的使用简单介绍/" data-id="ciacnw8eo00033bm9f6rvszr7" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-第六篇-android 波浪形view的制作" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/06/01/第六篇-android 波浪形view的制作/" class="article-date">
+  <time datetime="2015-05-31T16:17:41.000Z" itemprop="datePublished">2015-06-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Android应用开发/">Android应用开发</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/06/01/第六篇-android 波浪形view的制作/">android 波浪形View的实现</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="背景">背景</h1><p>请假回家当伴郎，由于实在无聊，就写下了此篇博客！！按照惯例，先上动态图<br><img src="http://ww3.sinaimg.cn/large/a174c633gw1ertotfjt1dg20f00qotla.gif" alt="效果图"></p>
+<p>怎么样！效果比较赞吧！！！</p>
+<h1 id="思路">思路</h1><p>当我第一次看见这个效果的时候，我的第一个想法是：如果是静态的时候是什么样子的！好，再来张图<br><img src="http://ww2.sinaimg.cn/large/a174c633gw1ertou1hrisj20u01hcwgk.jpg" alt="图片"><br>看到这儿，大家有可能想到了 这不就是sin函数吗？对，不错，就是sin函数！！！<br>那怎么能实现这张静态图呢？我的思路是这样的：sin函数在我看来就是在x轴数据集合固定的时候，y轴对应数据的集合！那么x轴数据的集合是多少呢？请大家在看一下上图！不就是view的宽度吗！我们以每刻度为1，那么这个x轴的数据集合不就是[0,viewwidth]吗？此时我们只要代入sin函数中不就能求得y轴数据的集合了吗！！好大家先看下代码：</p>
+<p><img src="http://ww2.sinaimg.cn/large/a174c633gw1ertouhx6wjj20jd03dgm5.jpg" alt="图片"></p>
+<p>现在求的y轴数据的之后，想要画出那张静态图，就比较简单了！其实我们只要画viewwidth条垂直与x轴的直线就行了！那么怎么出现曲线状态呢！其实这些直线的高度不一样的。那这些高度是怎么求出来的呢？就是我们用一个固定高度减去刚才求的y轴的值！<br>接下来大家看代码就知道了</p>
+<p><img src="http://ww2.sinaimg.cn/large/a174c633gw1ertov0jwppj20m501rdg1.jpg" alt=""></p>
+<p>从代码中大家可以看到我们总共绘制了viewwidth条直线。</p>
+<p>至此，静态图就已经绘制OK了！！</p>
+<p>那么，怎么绘制动态图？聪明的小伙伴，可能已经想到了！就是不停的变幻y轴的值就行了！相信大家已经看到，我们是把y轴的值存放到数组中的！！我们只要按照一定的规律移动数组中数据的位置就行了！那么我们该怎么移动的？</p>
+<p>1.首先我得先定义个另外个数组用来存这些变化的数据。同时规定好了变化的量！！在这之前，大家得先了解这个函数 System.arraycopy() （不懂的，自己百度去！！）<br><img src="http://ww1.sinaimg.cn/large/a174c633gw1ertovion5jj20fe03d0te.jpg" alt="图"></p>
+<p>2.现在就是剩下每隔一段时间绘制啦！我们直接看整个 ondraw() 方法！</p>
+<p><img src="http://ww2.sinaimg.cn/large/a174c633gw1ertow2wml1j20l909r76e.jpg" alt="图"></p>
+<h1 id="最后附上所有代码图">最后附上所有代码图</h1><p><img src="http://ww4.sinaimg.cn/large/a174c633gw1ertowvgb6jj20lh0ghtca.jpg" alt=""></p>
+<p><img src="http://ww2.sinaimg.cn/large/a174c633gw1ertoxepc37j20lv0i3dju.jpg" alt=""></p>
+<p>讲解结束！！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/06/01/第六篇-android 波浪形view的制作/" data-id="ciacnw8ep00043bm9x9afvzyl" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-第八篇-volley 的简单使用以及自定义Request" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/06/01/第八篇-volley 的简单使用以及自定义Request/" class="article-date">
+  <time datetime="2015-05-31T16:17:18.000Z" itemprop="datePublished">2015-06-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Android应用开发/">Android应用开发</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/06/01/第八篇-volley 的简单使用以及自定义Request/">Volley 的使用以及自定义Request</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Volley_的使用以及自定义Request">Volley 的使用以及自定义Request</h1><h2 id="一-什么是_Volley">一.什么是 Volley</h2><p><br></p>
+<p>2013年Google I/O大会上推出了一个新的网络通信框架。Volley是Android平台上的网络通信库，能使网络通信更快，更简单，更健壮。Volley特别适合数据量不大但是通信频繁的场景。</p>
+<h2 id="二-使用">二.使用</h2><h4 id="1-_简单请求">1. 简单请求</h4><p>现在，我访问百度首页通过 Volley 提供给我的 Request—&gt;StringRequest()<br><img src="http://ww2.sinaimg.cn/large/a174c633gw1es6ceu5bpqj20ui077mz3.jpg" alt="图片"><br>从图中，可以到 StringRequest 这个类需要我们提供—请求方式（是 get 还是 post）,请求地址，正确返回数据接口的回调和请求发生错误接口的回调！！<br><br><br>大家有可能注意到了，当我们写完请求之后，我们就像请求队列里添加了这个请求，之后请求就执行啦！！这只是GET请求！<br><br><br>那接下来，我给大家演示一下 post 的请求。请看图<br><img src="http://ww2.sinaimg.cn/large/a174c633gw1es6d66r3hzj20v009xtb6.jpg" alt="图片"><br>从图中大家可以看到了！我只是修改了一下请求方式，把 get 改成了 post! 另外，我重写了 Request 这个方法中的 getParams() 方法！那它是干什么用的呢？他就是返回我们的请求参数的！使用者只要把 key-value放入 HashMap中就行啦！<br><br><br>不知道，大家注意到没有！这两个请求我都调用了这个方法 request.setTag(“baidu”); 我为啥要调用这个方法嘞？其实是有原因的！在Volley框架中，我们可以给每个请求设置tag，这样我们就可以在 activity 或者 fragment 生命结束的时候（onDestory()）中在代用这个方法  queue.cancelAll(“baidu”); 这个就可以取消正在请求的请求了(当然tag要一致哦)。避免出现空指针异常！</p>
+<h4 id="2-自定义请求">2.自定义请求</h4><p>首先，我们来看一下 StringRequest 类的源码：<br><img src="http://ww2.sinaimg.cn/large/a174c633gw1es6exo3vvqj20n90exn1e.jpg" alt="图片"><br>从图中，我们可以看到，StringRequest 也是继承 Request<t> 这个泛型类的。继承这个类，我们要重写来两个方法<br>deliverResponse(String response) 和  parseNetworkResponse(NetworkResponse response) 这个两个方法具体做什么，我已在图中写了注释！其实很简单！如果，看懂了这个，我们就可以自己写 Request 了！在这个我还说明一下<br>NetworkResponse 这个类中包含了服务器返回的结果，返回头等。其中的 response.data 这个是一个 byte 数组！<br>response.headers 这个是请求头数据！ HttpHeaderParser.parseCharset(response.headers) 这个就是服务器返回的编码方式！之后就是简单的 new 个字符串了！<br><br></t></p>
+<p>————————————————————-开始自定义喽——————————————————-</p>
+<p>大家在平时的开发中和服务器的数据交互一般都是 json 格式的数据！那么现在就来自定义个 JSONRequest 请求！我先直接上代码<br><img src="http://ww4.sinaimg.cn/large/a174c633gw1es6fuma60yj210p0injxn.jpg" alt="代码"><br>可以看到，JSONRequest  是继承自 Request 类的。在parseNetworkResponse()方法中，先是将服务器响应的数据解析出来，然后通过调用 FastJson 的 parseObject 方法将数据组装成对象。在deliverResponse方法中仍然是将最终的数据进行回调.</p>
+<p><br><br>在这里，我想先说一下我在继承 Request 时比较常覆写的几个方法以及它们的含义！<br><br></p>
+<p>Map<string, string=""> getParams();用来返回请求参数的。<br><br></string,></p>
+<p>Map<string, string=""> getHeaders();用来返回请求头的！我们可以用来返回指定的请求头！<br><br></string,></p>
+<p>RetryPolicy getRetryPolicy();用来返回超市时间的！<br><br></p>
+<p>String getParamsEncoding();用来返回请求数据的编码的！</p>
+<h2 id="好了至此。Volley_的讲解就此完了！！接下的博文_我就开始写_Volley_了！第一次说源码方面的东西～～～">好了至此。Volley 的讲解就此完了！！接下的博文 我就开始写 Volley 了！第一次说源码方面的东西～～～</h2>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/06/01/第八篇-volley 的简单使用以及自定义Request/" data-id="ciacnw8eq00053bm9ibsfb7u4" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-第五篇-记一次androidd登陆页面的实现" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/06/01/第五篇-记一次androidd登陆页面的实现/" class="article-date">
+  <time datetime="2015-05-31T16:17:04.000Z" itemprop="datePublished">2015-06-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Android应用开发/">Android应用开发</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/06/01/第五篇-记一次androidd登陆页面的实现/">记一次 android 登陆页面的实现</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="背景">背景</h1><h6 id="先说个事：最近我准备做个开源的博客园android客户端！符合Google最新的material_design设计风格的！不知道有没有小伙伴愿意和我一起做呢？如果有愿意的，请私信我哦！！！！我还打算每天直播我们工作的进度,代码，以及BUG等！！">先说个事：最近我准备做个开源的博客园android客户端！符合Google最新的material design设计风格的！不知道有没有小伙伴愿意和我一起做呢？如果有愿意的，请私信我哦！！！！我还打算每天直播我们工作的进度,代码，以及BUG等！！</h6><p><br><br><br></p>
+<p> 最近在做公司的一个项目！在登陆页面那儿有几个小知识点！虽然不是很难，但我猜想还是会有很多童鞋不会！所以我觉得我有必要写一篇博客来说明一下！下面呢我就先上一下效果动态图</p>
+<p><img src="http://ww2.sinaimg.cn/large/a174c633gw1erj4jb2vnfg20b40hsk35.gif" alt="效果图"></p>
+<h1 id="看效果">看效果</h1><p>  1.用户头像是原形，另外周围有白色光圈！</p>
+<p>  2.用户名和密码输入框在空的时候点击登陆为抖动！</p>
+<h1 id="原理">原理</h1><p>  1.用户头像是自定义ImageView,另外读者要注意画笔的模式，下面我先给个谷歌官方的截图</p>
+<p>  <img src="http://ww4.sinaimg.cn/large/a174c633gw1erj6gw11o5j208w0awmyg.jpg" alt="mode"></p>
+<p>  这里我就不过多介绍当设置了这些模式之后会有哪些效果，在下面的代码中我也只是说明我们要用的模式！！其他的读者自己去谷歌吧！！</p>
+<p>  2.第二个就是个简单的动画！！很简单！！</p>
+<h1 id="代码实现">代码实现</h1><h5 id="一-我们先来看那个动画效果吧！我是直接写的xml文件_看代码：">一.我们先来看那个动画效果吧！我是直接写的xml文件 看代码：</h5><p><img src="http://ww4.sinaimg.cn/large/a174c633gw1erj6k4jj7uj20jg043q3o.jpg" alt="xml"><br>这边我是用的移动x轴方向，动画只执行一次，另外，请读者注意一下，我设置了了个动画插值器（控制动画的变化的），我是用的cycleInterpolator这个，用来控制动画循环的</p>
+<p><img src="http://ww2.sinaimg.cn/large/a174c633gw1erj6kjpz0aj20k602c74r.jpg" alt="xml"></p>
+<p>这个就是动画插值器了！！执行两次！</p>
+<p>好了动画xml写完了,我们来看看怎么执行的？<br><img src="http://ww3.sinaimg.cn/large/a174c633gw1erj6p71m47j20nx064dhp.jpg" alt="代码"></p>
+<p>很简单，看代码就行了！我就不过多解释了！！</p>
+<h5 id="二-自定义ImageView的实现">二.自定义ImageView的实现</h5><p>  1.首先我得先确定ImageView的大小<br>  <img src="http://ww4.sinaimg.cn/large/a174c633gw1erj751pgg4j20ly0cnads.jpg" alt="代码"><br>  在这里我的先对上面的代码中的MeasureSpec.getMode(int size)这个方法解释下？<br>  这个方法是得到宽高大小模式的？他有三个返回值：<br><br>  <br><br>  MeasureSpec.EXACTLY:这个是指当你的view的大小设置成fill_parent或者固定的大小 就是大小确定的<br><br>  MeasureSpec.AT_MOST:这个是指当你的view的大小设置成wrap_parent的时候，不确定 自适应<br><br>  MeasureSpec.UNSPECIFIED:这个是指当你的view的大小未指定的时候，这种情况不太可能出现 我们一般不考虑！<br>  <br><br>  当我们了解这个的时候，就可以确定该view的宽高了！当MeasureSpec.EXACTLY的时候，就用设置的！当是                   MeasureSpec.AT_MOST的时候，就是内部图片大小加padding值！<br>  2.开始绘制 先看代码，在解释<br>  <img src="http://ww3.sinaimg.cn/large/a174c633gw1erj7i2nhnoj20rf0d7gpj.jpg" alt="代码"><br>    首先我们得获取宽高的最小值，之后再把图片缩小/放大 到这个大小，之后就是得到圆形的图片！<br><br>    <br><br>    我们直接看getRoundBitMap(Bitmap map,int min)方法，要传两个参数，一个原图还有大小！<br><br>    <br><br>    首先我们得绘制一个和原图一样大小的画布之后绘制圆形在绘制图片，至此就得到了圆形图片了！另外，请读者注意下，就是在我们在画布上绘制了圆形之后，为画笔paint设置了Xfermode，对就是PorterDuff.Mode.SRC_IN！那这个是什么意思呢？还记得我们在文章开头现实的那个mode的所有类型吗？他已经很好的展示了当设置了这个写mode之后的效果！首先我得先说明下 dst是先绘制的,src是后绘制的?那现在就很好理解PorterDuff.Mode.SRC_IN这个的意思了！取dst和src的交集，但是是显示src(后绘制的)！现在，大家应该能明白我先画圆形在在绘制bitmap了吧！！<br>    <br><br>     现在我们再来看ondraw()这个方法，当我们得到了圆形的bitmap之后，按理说直接绘制就行了，但是问题在于外面还有层白圈！其实很简单—就是同心圆而已，只不过半径不一样罢了。只要绘制个半径比bitmap大的圆就行啦！！！<br>     <br><br>     <br><br>     至此，本篇文章结束！！<br>     <br><br>     <br></p>
+<h2 id="最后还得在说下：最近我准备做个开源的博客园android客户端！符合Google最新的material_design设计风格的！不知道有没有小伙伴愿意和我一起做呢？如果有愿意的，请私信我哦！！！！我还打算每天直播我们工作的进度,代码，以及BUG等！！求联系哦！！！！！！！！">最后还得在说下：最近我准备做个开源的博客园android客户端！符合Google最新的material design设计风格的！不知道有没有小伙伴愿意和我一起做呢？如果有愿意的，请私信我哦！！！！我还打算每天直播我们工作的进度,代码，以及BUG等！！求联系哦！！！！！！！！</h2>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/06/01/第五篇-记一次androidd登陆页面的实现/" data-id="ciacnw8er00063bm9kh85nh86" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/缓存/">缓存</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-第二篇-android APP是否需要缓存？+简单架构" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/06/01/第二篇-android APP是否需要缓存？+简单架构/" class="article-date">
+  <time datetime="2015-05-31T16:16:14.000Z" itemprop="datePublished">2015-06-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/思考/">思考</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/06/01/第二篇-android APP是否需要缓存？+简单架构/">APP 是否需要缓存</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="问题的由来">问题的由来</h1><p> 昨天，当我写完我的第一篇博客之后，我便百无聊赖的玩起了手机！当我打开Google自带的一些app的时候，发现他们直接叫我连接网络，并没有缓存上次从网络获取的数据。这就让我感到很奇怪！于是我就想：现在APP到底要不要缓存数据？</p>
+<h1 id="缓存数据的优点">缓存数据的优点</h1><p>1.当用户在没有网络的情况下可以浏览以前的</p>
+<p>2.当再从网络获取的时候，可以先显示已有，提升用户体验</p>
+<h1 id="缓存数据的缺点">缓存数据的缺点</h1><p>1.维护起来麻烦</p>
+<p>2.易使APP变得臃肿</p>
+<p>3.缓存策略的选择</p>
+<h1 id="我的观点">我的观点</h1><p>1.感觉未来应该是倾向于没有缓存的，这是由于未来流量费越来月便宜，网速变快！还有大面积的wifi覆盖等缘由。APP不实用缓存已经不会影响用户的实际体验！同事还节省了APP开发成本，维护成本！</p>
+<h1 id="一种简单的项目架构">一种简单的项目架构</h1><p> ~ 注意该架构是带有缓存的，使用ContentProvider结合CursorAdapter</p>
+<p>直接上图(直接用笔画的 大家就将就的看一下吧)</p>
+<p><img src="http://ww2.sinaimg.cn/large/a174c633gw1erelpvk68aj20um0m6q8k.jpg" alt="架构图"><br>从图中可以看出，所有的数据获取都是从数据库中获取，通过CursorAdapter的使用 直接更新ListView列表中的内容。而不需要我们自己手动去更新！！</p>
+<h4 id="就这样了">就这样了</h4>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/06/01/第二篇-android APP是否需要缓存？+简单架构/" data-id="ciacnw8et00073bm966oqql1n" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/缓存/">缓存</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-第九篇-Volley 源码分析" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/06/01/第九篇-Volley 源码分析/" class="article-date">
+  <time datetime="2015-05-31T16:15:34.000Z" itemprop="datePublished">2015-06-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Volley-源码分析/">Volley 源码分析</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/06/01/第九篇-Volley 源码分析/">Volley 源码分析</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Volley_源码分析">Volley 源码分析</h1><h2 id="图片分析">图片分析</h2><p><br><br>要说源码分析，我们得先看一下官方的配图：<br><img src="http://ww3.sinaimg.cn/large/a174c633gw1esc7dcevc8j20f60e1q56.jpg" alt="图片"></p>
+<h4 id="从这张图中我们可以了解到_volley_工作流程：">从这张图中我们可以了解到 volley 工作流程：</h4><h6 id="1-请求加入优先队列">1.请求加入优先队列</h6><h6 id="2-从缓存调度器中查看是否存在该请求，如果有（没有进入第三步）直接缓存中读取并解析数据，最后分发到_UI_线程（主线程）。">2.从缓存调度器中查看是否存在该请求，如果有（没有进入第三步）直接缓存中读取并解析数据，最后分发到 UI 线程（主线程）。</h6><h6 id="3-从网络中获取数据（如果设置可以缓存，则写入缓存）并解析数据，最后分发到_UI_线程（主线程）。">3.从网络中获取数据（如果设置可以缓存，则写入缓存）并解析数据，最后分发到 UI 线程（主线程）。</h6><h4 id="从图中，我们还可以看到_volley_的工作其实就是三个线程之间的数据传递_主线程_缓存线程_网络线程。">从图中，我们还可以看到 volley 的工作其实就是三个线程之间的数据传递 主线程 缓存线程 网络线程。</h4><p><br></p>
+<h2 id="代码分析">代码分析</h2><p><br></p>
+<p>既然是源码分析，当然是得从源码开始啦（怎么下载源码我就不说了！不会的自行谷歌）！那我们从哪段源码开始嘞？我们就从我们使用 volley 框架的第一句代码开始。</p>
+<p>Volley.newRequestQueue(context) 是我们使用 volley 框架的第一句代码！这句代码是用创建个 RequestQueue (请求队列。对，这个就是 volley 工作流程中的第一步的铺垫。这样请求才能有容器装啊！)。那好，我们现在就来看一下 newRequestQueue(context) 这个静态方法：</p>
+<pre><code><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> RequestQueue <span class="title">newRequestQueue</span><span class="params">(Context context)</span> </span>{
+    <span class="keyword">return</span> newRequestQueue(context, null);
+}
+<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> RequestQueue <span class="title">newRequestQueue</span><span class="params">(Context context, HttpStack <span class="built_in">stack</span>)</span> </span>{
+    File cacheDir = <span class="keyword">new</span> File(context.getCacheDir(), DEFAULT_CACHE_DIR);
+
+    String userAgent = <span class="string">"volley/0"</span>;
+    <span class="keyword">try</span> {
+        String packageName = context.getPackageName();
+        PackageInfo info = context.getPackageManager().getPackageInfo(packageName, <span class="number">0</span>);
+        userAgent = packageName + <span class="string">"/"</span> + info.versionCode;
+    } <span class="keyword">catch</span> (NameNotFoundException e) {
+    }
+
+    <span class="keyword">if</span> (<span class="built_in">stack</span> == null) {
+        <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= <span class="number">9</span>) {
+            <span class="built_in">stack</span> = <span class="keyword">new</span> HurlStack();
+        } <span class="keyword">else</span> {
+            <span class="comment">// Prior to Gingerbread, HttpUrlConnection was unreliable.</span>
+            <span class="comment">// See: http://android-developers.blogspot.com/2011/09/androids-http-clients.html</span>
+            <span class="built_in">stack</span> = <span class="keyword">new</span> HttpClientStack(AndroidHttpClient.newInstance(userAgent));
+        }
+    }
+
+    Network network = <span class="keyword">new</span> BasicNetwork(<span class="built_in">stack</span>);
+
+    RequestQueue <span class="built_in">queue</span> = <span class="keyword">new</span> RequestQueue(<span class="keyword">new</span> DiskBasedCache(cacheDir), network);
+    <span class="built_in">queue</span>.start();
+
+    <span class="keyword">return</span> <span class="built_in">queue</span>;
+}
+</code></pre><p>从代码中可以看出，我们使用的是 newRequestQueue(Context context, HttpStack stack) 这个函数的重载方法！<br>我简要对这个方法说明下：在系统版本大于等于 9 的时候，我们创建 HurlStack(就是 HttpUrlConnection),在小于 9 的时候我们创建 HttpClientStack(就是 HttpClient) 至于为啥要要这么做。那就是 HttpUrlConnection 的性能要比HttpClient 的好。当然这里我还可以使用另外第三发的 HTTP 库 。比如说 okhttp 。这里我们只要调用 newRequestQueue(Context context, HttpStack stack) 这个方法就行了！当然 要对 okhttp 做简单的封装了！前提是要继承 HttpStack 这个接口啊！</p>
+<p>接下来 我们直接看这句代码：RequestQueue queue = new RequestQueue(new DiskBasedCache(cacheDir), network); 这就是我们要创建的请求队列啦！看 RequestQueue 这个类：</p>
+<p>我们先看构造函数（直接看最复杂的！哈哈）</p>
+<pre><code><span class="keyword">public</span> RequestQueue(<span class="keyword">Cache</span> <span class="keyword">cache</span>, Network network, int threadPoolSize,
+        ResponseDelivery delivery) {
+    mCache <span class="subst">=</span> <span class="keyword">cache</span>;
+    mNetwork <span class="subst">=</span> network;
+    mDispatchers <span class="subst">=</span> <span class="literal">new</span> NetworkDispatcher<span class="preprocessor">[</span>threadPoolSize<span class="preprocessor">]</span><span class="markup">;
+    mDelivery = delivery;
+}</span>
+</code></pre><p>可以看到，需要传入 缓存 ，网络执行器，线程池大小，返回结果分发器。这四个参数！接着 我们再来看一下 queue.start() 这句代码的含义！还是一样先看代码：</p>
+<pre><code> <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">start</span><span class="params">()</span> </span>{
+    stop();  <span class="comment">// Make sure any currently running dispatchers are stopped.</span>
+    <span class="comment">// Create the cache dispatcher and start it.</span>
+    mCacheDispatcher = <span class="keyword">new</span> CacheDispatcher(mCacheQueue, mNetworkQueue, mCache, mDelivery);
+    mCacheDispatcher.start();
+
+    <span class="comment">// Create network dispatchers (and corresponding threads) up to the pool size.</span>
+    <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; mDispatchers.length; i++) {
+        NetworkDispatcher networkDispatcher = <span class="keyword">new</span>  (mNetworkQueue, mNetwork,
+                mCache, mDelivery);
+        mDispatchers[i] = networkDispatcher;
+        networkDispatcher.start();
+    }
+}
+</code></pre><p>先来解释下这这段代码：先停止当前正在运行的所有的线程！接着 初始化 CacheDispatcher(缓存调度器) 并启动他！接着就是启动 NetworkDispatcher(网络调度器) 这有多个。他的个数全靠 threadPoolSize 这个变量控制（默认大小是4）。这样一来。请求队列就是初始化好了！就等待任务加入了啦！！那我们就趁热打铁，直接看加入任务队列的源码：</p>
+<pre><code> <span class="keyword">public</span> Request   {
+    request.setRequestQueue(<span class="keyword">this</span>);
+    <span class="keyword">synchronized</span> (mCurrentRequests) {
+        mCurrentRequests.<span class="built_in">add</span>(request);
+    }
+    request.setSequence(getSequenceNumber());
+    request.addMarker(<span class="string">"add-to-queue"</span>);
+    <span class="keyword">if</span> (!request.shouldCache()) {
+        mNetworkQueue.<span class="built_in">add</span>(request);
+        <span class="keyword">return</span> request;
+    }
+    <span class="keyword">synchronized</span> (mWaitingRequests) {
+        <span class="keyword">String</span> cacheKey = request.getCacheKey();
+        <span class="keyword">if</span> (mWaitingRequests.containsKey(cacheKey)) {
+            <span class="comment">// There is already a request in flight. Queue up.</span>
+            Queue&lt;Request&gt; stagedRequests = mWaitingRequests.<span class="built_in">get</span>(cacheKey);
+            <span class="keyword">if</span> (stagedRequests == <span class="keyword">null</span>) {
+                stagedRequests = <span class="keyword">new</span> LinkedList&lt;Request&gt;();
+            }
+            stagedRequests.<span class="built_in">add</span>(request);
+            mWaitingRequests.put(cacheKey, stagedRequests);
+            <span class="keyword">if</span> (VolleyLog.DEBUG) {
+                VolleyLog.v(<span class="string">"Request for cacheKey=%s is in flight, putting on hold."</span>, cacheKey);
+            }
+        } <span class="keyword">else</span> {
+            mWaitingRequests.put(cacheKey, <span class="keyword">null</span>);
+            mCacheQueue.<span class="built_in">add</span>(request);
+        }
+        <span class="keyword">return</span> request;
+    }
+}
+</code></pre><p>依旧是来解读这段代码，在解读这该段代码的时候，我们先来弄清楚其中三个变量的含义：</p>
+<pre><code><span class="comment">//当前 RequestQueue 中所有的请求队列</span>
+<span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">Set</span>&lt;Request&gt; mCurrentRequests = <span class="keyword">new</span> HashSet&lt;Request&gt;();
+<span class="comment">//缓存队列</span>
+<span class="keyword">private</span> <span class="keyword">final</span> PriorityBlockingQueue&lt;Request&gt; mCacheQueue =
+    <span class="keyword">new</span> PriorityBlockingQueue&lt;Request&gt;();
+<span class="comment">//网络队列 正在进入的</span>
+<span class="keyword">private</span> <span class="keyword">final</span> PriorityBlockingQueue&lt;Request&gt; mNetworkQueue =
+    <span class="keyword">new</span> PriorityBlockingQueue&lt;Request&gt;();
+</code></pre><p>含义如注释！那么我们接着看 add(Request request) 这个方法！首先还是先把任务加入 当前队列。之后request.shouldCache() 判断该任务需要被缓存。不需要的话 直接进入 网络队列！否则的话就加入缓存队列！！</p>
+<p>分析完了怎么加入队列之后，我们要来分析下两外两个类了 CacheDispatcher 和 NetworkDispatcher 这里先说下这两个类的共同点：那就是都继承了 Thread 类！也就说他们都是线程类！可以被执行。这也就解释了 RequestQueue 类中的start() 方法中  mCacheDispatcher.start() 和 networkDispatcher.start() 这两句代码！</p>
+<p>那么我们先来看一下 CacheDispatcher 这个类！我们直接该类最核心的方法 run() 方法！</p>
+<pre><code> <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>{
+    <span class="keyword">if</span> (DEBUG) VolleyLog.v(<span class="string">"start new dispatcher"</span>);
+    Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+    mCache.initialize();
+    <span class="keyword">while</span> (<span class="keyword">true</span>) {
+        <span class="keyword">try</span> {
+            <span class="comment">// Get a request from the cache triage queue, blocking until</span>
+            <span class="comment">// at least one is available.</span>
+            <span class="keyword">final</span> Request request = mCacheQueue.take();
+            request.addMarker(<span class="string">"cache-queue-take"</span>);
+
+            <span class="comment">// If the request has been canceled, don't bother dispatching it.</span>
+            <span class="keyword">if</span> (request.isCanceled()) {
+                request.finish(<span class="string">"cache-discard-canceled"</span>);
+                <span class="keyword">continue</span>;
+            }
+
+            <span class="comment">// Attempt to retrieve this item from cache.</span>
+            Cache.Entry entry = mCache.get(request.getCacheKey());
+            <span class="keyword">if</span> (entry == <span class="keyword">null</span>) {
+                request.addMarker(<span class="string">"cache-miss"</span>);
+                <span class="comment">// Cache miss; send off to the network dispatcher.</span>
+                mNetworkQueue.put(request);
+                <span class="keyword">continue</span>;
+            }
+
+            <span class="comment">// If it is completely expired, just send it to the network.</span>
+            <span class="keyword">if</span> (entry.isExpired()) {
+                request.addMarker(<span class="string">"cache-hit-expired"</span>);
+                request.setCacheEntry(entry);
+                mNetworkQueue.put(request);
+                <span class="keyword">continue</span>;
+            }
+            <span class="comment">// We have a cache hit; parse its data for delivery back to the request.</span>
+            request.addMarker(<span class="string">"cache-hit"</span>);
+            Response&lt;?&gt; response = request.parseNetworkResponse(
+                    <span class="keyword">new</span> NetworkResponse(entry.data, entry.responseHeaders));
+            request.addMarker(<span class="string">"cache-hit-parsed"</span>);
+            <span class="keyword">if</span> (!entry.refreshNeeded()) {
+                <span class="comment">// Completely unexpired cache hit. Just deliver the response.</span>
+                mDelivery.postResponse(request, response);
+            } <span class="keyword">else</span> {
+                <span class="comment">// Soft-expired cache hit. We can deliver the cached response,</span>
+                <span class="comment">// but we need to also send the request to the network for</span>
+                <span class="comment">// refreshing.</span>
+                request.addMarker(<span class="string">"cache-hit-refresh-needed"</span>);
+                request.setCacheEntry(entry);
+
+                <span class="comment">// Mark the response as intermediate.</span>
+                response.intermediate = <span class="keyword">true</span>;
+
+                <span class="comment">// Post the intermediate response back to the user and have</span>
+                <span class="comment">// the delivery then forward the request along to the network.</span>
+                mDelivery.postResponse(request, response, <span class="keyword">new</span> Runnable() {
+                    <span class="annotation">@Override</span>
+                    <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>{
+                        <span class="keyword">try</span> {
+                            mNetworkQueue.put(request);
+                        } <span class="keyword">catch</span> (InterruptedException e) {
+                            <span class="comment">// Not much we can do about this.</span>
+                        }
+                    }
+                });
+            }
+
+        } <span class="keyword">catch</span> (InterruptedException e) {
+            <span class="comment">// We may have been interrupted because it was time to quit.</span>
+            <span class="keyword">if</span> (mQuit) {
+                <span class="keyword">return</span>;
+            }
+            <span class="keyword">continue</span>;
+        }
+    }
+}
+</code></pre><p>  这段代码中有句代码非常抢眼，没错！那就是 while(true) 这句话了！有的童鞋可能已经想到了：这是个死循环(这不废话！)，另外肯定是在不同的从某个队列中取/存数据。没错，就是这样啊！其实很简单！我们接着细说：首先从缓存队列中去除队列，接着判断该请求是否已经取消 if (request.isCanceled()) 如果已经取消的话，就是不走下面的代码！继续从头循环！反之，从缓存中读取数据，如果没有的话就把该队列加入网络请求队列。如果有的但是缓存已经过期的话 也是加入网络请求队列（  if (entry == null)  和 if (entry.isExpired()) 这两个 if 下的语句就是处理上面两个功能的）。如果以上两个条件都不满足的话！就直接 request.parseNetworkResponse(new NetworkResponse(entry.data, entry.responseHeaders)) 解析缓存中的数据进行回调了！</p>
+<p>  下面我们看 NetworkDispatcher 类的代码，同样的我们直接看 核心代码:</p>
+<pre><code><span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>{
+    Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
+    Request request;
+    <span class="keyword">while</span> (<span class="keyword">true</span>) {
+        <span class="keyword">try</span> {
+            <span class="comment">// Take a request from the queue.</span>
+            request = mQueue.take();
+        } <span class="keyword">catch</span> (InterruptedException e) {
+            <span class="comment">// We may have been interrupted because it was time to quit.</span>
+            <span class="keyword">if</span> (mQuit) {
+                <span class="keyword">return</span>;
+            }
+            <span class="keyword">continue</span>;
+        }
+
+        <span class="keyword">try</span> {
+            request.addMarker(<span class="string">"network-queue-take"</span>);
+
+            <span class="comment">// If the request was cancelled already, do not perform the</span>
+            <span class="comment">// network request.</span>
+            <span class="keyword">if</span> (request.isCanceled()) {
+                request.finish(<span class="string">"network-discard-cancelled"</span>);
+                <span class="keyword">continue</span>;
+            }
+
+            <span class="comment">// Tag the request (if API &gt;= 14)</span>
+            <span class="keyword">if</span> (Build.VERSION.SDK_INT &gt;= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+                TrafficStats.setThreadStatsTag(request.getTrafficStatsTag());
+            }
+
+            <span class="comment">// Perform the network request.</span>
+            NetworkResponse networkResponse = mNetwork.performRequest(request);
+            request.addMarker(<span class="string">"network-http-complete"</span>);
+
+            <span class="comment">// If the server returned 304 AND we delivered a response already,</span>
+            <span class="comment">// we're done -- don't deliver a second identical response.</span>
+            <span class="keyword">if</span> (networkResponse.notModified &amp;&amp; request.hasHadResponseDelivered()) {
+                request.finish(<span class="string">"not-modified"</span>);
+                <span class="keyword">continue</span>;
+            }
+
+            <span class="comment">// Parse the response here on the worker thread.</span>
+            Response&lt;?&gt; response = request.parseNetworkResponse(networkResponse);
+            request.addMarker(<span class="string">"network-parse-complete"</span>);
+
+            <span class="comment">// Write to cache if applicable.</span>
+            <span class="comment">// TODO: Only update cache metadata instead of entire record for 304s.</span>
+            <span class="keyword">if</span> (request.shouldCache() &amp;&amp; response.cacheEntry != <span class="keyword">null</span>) {
+                mCache.put(request.getCacheKey(), response.cacheEntry);
+                request.addMarker(<span class="string">"network-cache-written"</span>);
+            }
+
+            <span class="comment">// Post the response back.</span>
+            request.markDelivered();
+            mDelivery.postResponse(request, response);
+        } <span class="keyword">catch</span> (VolleyError volleyError) {
+            parseAndDeliverNetworkError(request, volleyError);
+        } <span class="keyword">catch</span> (Exception e) {
+            VolleyLog.e(e, <span class="string">"Unhandled exception %s"</span>, e.toString());
+            mDelivery.postError(request, <span class="keyword">new</span> VolleyError(e));
+        }
+    }
+}
+</code></pre><p>同样的是，先从网络请求队列中取出任务，接着在判断是否要取消，如果要则跳过下面的代码，重新取任务！调用   NetworkResponse networkResponse = mNetwork.performRequest(request); 这句代码，获取 网络返回结果！接着，代码和 CacheDispatcher 中差不多！唯一的区别就是：如果当前的请求需要加入缓存，则加入缓存！细心的同学可能发现了，CacheDispatcher 和 NetworkDispatcher 这两个类中有句相同的代码   Response&lt;?&gt; response = request.parseNetworkResponse(networkResponse); 就是这句！核心的就是parseNetworkResponse(networkResponse) 这个函数的实现我在上一篇 <a href="http://www.cnblogs.com/likeandroid/" target="_blank" rel="external">Volley 的使用以及自定义Request</a> 中已经说过了！是有我们实现的！</p>
+<p>这里的我们还得在注意一个类：那就是 BasicNetwork ！其实这个类没有什么可以细说的！他就是请求网络接着返回结果！我这里也把核心代码上一下：</p>
+<pre><code>  <span class="keyword">public</span> NetworkResponse performRequest(Request&lt;?&gt; request) <span class="keyword">throws</span> VolleyError {
+    <span class="keyword">long</span> requestStart = SystemClock.elapsedRealtime();
+    <span class="keyword">while</span> (<span class="keyword">true</span>) {
+        HttpResponse httpResponse = <span class="keyword">null</span>;
+        <span class="built_in">byte</span>[] responseContents = <span class="keyword">null</span>;
+        Map&lt;<span class="keyword">String</span>, <span class="keyword">String</span>&gt; responseHeaders = <span class="keyword">new</span> <span class="keyword">HashMap</span>&lt;<span class="keyword">String</span>, <span class="keyword">String</span>&gt;();
+        <span class="keyword">try</span> {
+            <span class="comment">// Gather headers.</span>
+            Map&lt;<span class="keyword">String</span>, <span class="keyword">String</span>&gt; headers = <span class="keyword">new</span> <span class="keyword">HashMap</span>&lt;<span class="keyword">String</span>, <span class="keyword">String</span>&gt;();
+            addCacheHeaders(headers, request.getCacheEntry());
+            httpResponse = mHttpStack.performRequest(request, headers);
+            StatusLine statusLine = httpResponse.getStatusLine();
+            <span class="built_in">int</span> statusCode = statusLine.getStatusCode();
+
+            responseHeaders = convertHeaders(httpResponse.getAllHeaders());
+            <span class="comment">// Handle cache validation.</span>
+            <span class="keyword">if</span> (statusCode == HttpStatus.SC_NOT_MODIFIED) {
+                <span class="keyword">return</span> <span class="keyword">new</span> NetworkResponse(HttpStatus.SC_NOT_MODIFIED,
+                        request.getCacheEntry().data, responseHeaders, <span class="keyword">true</span>);
+            }
+
+            responseContents = entityToBytes(httpResponse.getEntity());
+            <span class="comment">// if the request is slow, log it.</span>
+            <span class="keyword">long</span> requestLifetime = SystemClock.elapsedRealtime() - requestStart;
+            logSlowRequests(requestLifetime, request, responseContents, statusLine);
+
+            <span class="keyword">if</span> (statusCode != HttpStatus.SC_OK &amp;&amp; statusCode != HttpStatus.SC_NO_CONTENT) {
+                <span class="keyword">throw</span> <span class="keyword">new</span> IOException();
+            }
+            <span class="keyword">return</span> <span class="keyword">new</span> NetworkResponse(statusCode, responseContents, responseHeaders, <span class="keyword">false</span>);
+        } <span class="keyword">catch</span> (SocketTimeoutException e) {
+            attemptRetryOnException(<span class="string">"socket"</span>, request, <span class="keyword">new</span> TimeoutError());
+        } <span class="keyword">catch</span> (ConnectTimeoutException e) {
+            attemptRetryOnException(<span class="string">"connection"</span>, request, <span class="keyword">new</span> TimeoutError());
+        } <span class="keyword">catch</span> (MalformedURLException e) {
+            <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(<span class="string">"Bad URL "</span> + request.getUrl(), e);
+        } <span class="keyword">catch</span> (IOException e) {
+            <span class="built_in">int</span> statusCode = <span class="number">0</span>;
+            NetworkResponse networkResponse = <span class="keyword">null</span>;
+            <span class="keyword">if</span> (httpResponse != <span class="keyword">null</span>) {
+                statusCode = httpResponse.getStatusLine().getStatusCode();
+            } <span class="keyword">else</span> {
+                <span class="keyword">throw</span> <span class="keyword">new</span> NoConnectionError(e);
+            }
+            VolleyLog.e(<span class="string">"Unexpected response code %d for %s"</span>, statusCode, request.getUrl());
+            <span class="keyword">if</span> (responseContents != <span class="keyword">null</span>) {
+                networkResponse = <span class="keyword">new</span> NetworkResponse(statusCode, responseContents,
+                        responseHeaders, <span class="keyword">false</span>);
+                <span class="keyword">if</span> (statusCode == HttpStatus.SC_UNAUTHORIZED ||
+                        statusCode == HttpStatus.SC_FORBIDDEN) {
+                    attemptRetryOnException(<span class="string">"auth"</span>,
+                            request, <span class="keyword">new</span> AuthFailureError(networkResponse));
+                } <span class="keyword">else</span> {
+                    <span class="comment">// TODO: Only throw ServerError for 5xx status codes.</span>
+                    <span class="keyword">throw</span> <span class="keyword">new</span> ServerError(networkResponse);
+                }
+            } <span class="keyword">else</span> {
+                <span class="keyword">throw</span> <span class="keyword">new</span> NetworkError(networkResponse);
+            }
+        }
+    }
+}
+</code></pre><p>这个类 我就真的不细讲啦！！</p>
+<p>上面已经说了，在解析玩数据之后其实就分发数据了！让用户能够在 UI线程中调用了！现在我们就来看一下这个分发类：ExecutorDelivery。 我们还是先看这个类的构造函数：</p>
+<pre><code> <span class="keyword">public</span>  (<span class="keyword">final</span> Handler <span class="keyword">handler</span>) {
+    <span class="comment">// Make an Executor that just wraps the handler.</span>
+    mResponsePoster = <span class="keyword">new</span> Executor() {
+        <span class="annotation">@Override</span>
+        <span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">execute</span><span class="params">(Runnable command)</span> </span>{
+            <span class="keyword">handler</span>.post(command);
+        }
+    };
+}
+</code></pre><p>从代码中我们可以看到，我们需要传一个Handller进入，此时我们在回想一下这个类在 RequestQueue 类中是怎么初始化的？</p>
+<pre><code> <span class="function"><span class="keyword">public</span> <span class="title">RequestQueue</span><span class="params">(Cache cache, Network network, <span class="keyword">int</span> threadPoolSize)</span> </span>{
+    <span class="keyword">this</span>(cache, network, threadPoolSize,
+            <span class="keyword">new</span> ExecutorDelivery(<span class="keyword">new</span> Handler(Looper.getMainLooper())));
+}
+</code></pre><p>没错！大家可以看到，是传入了一个主线中的handler！</p>
+<p>当在 CacheDispatcher 和 NetworkDispatcher 这两个类中调用了   mDelivery.postResponse(request, response); 这个方法的时，我们来看一下 ExecutorDelivery 这个类都做了什么！</p>
+<pre><code><span class="keyword">public</span> void postResponse(<span class="built_in">Request</span>&lt;?&gt; <span class="built_in">request</span>, <span class="built_in">Response</span>&lt;?&gt; <span class="built_in">response</span>, Runnable runnable) {
+    <span class="built_in">request</span>.markDelivered();
+    <span class="built_in">request</span>.addMarker(<span class="string">"post-response"</span>);
+    mResponsePoster.<span class="keyword">execute</span>(<span class="keyword">new</span> ResponseDeliveryRunnable(<span class="built_in">request</span>, <span class="built_in">response</span>, runnable));
+}
+</code></pre><p>我们直接执行了了个Runnable—&gt;ResponseDeliveryRunnable。那他又做了什么呢？</p>
+<pre><code><span class="keyword">public</span> <span class="function"><span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>{
+       <span class="comment">// If this request has canceled, finish it and don't deliver.</span>
+       <span class="keyword">if</span> (mRequest.isCanceled()) {
+           mRequest.finish(<span class="string">"canceled-at-delivery"</span>);
+           <span class="keyword">return</span>;
+       }
+
+       <span class="comment">// Deliver a normal response or error, depending.</span>
+       <span class="keyword">if</span> (mResponse.isSuccess()) {
+           mRequest.deliverResponse(mResponse.result);
+       } <span class="keyword">else</span> {
+           mRequest.deliverError(mResponse.<span class="keyword">error</span>);
+       }
+
+       <span class="comment">// If this is an intermediate response, add a marker, otherwise we're done</span>
+       <span class="comment">// and the request can be finished.</span>
+       <span class="keyword">if</span> (mResponse.intermediate) {
+           mRequest.addMarker(<span class="string">"intermediate-response"</span>);
+       } <span class="keyword">else</span> {
+           mRequest.finish(<span class="string">"done"</span>);
+       }
+
+       <span class="comment">// If we have been provided a post-delivery runnable, run it.</span>
+       <span class="keyword">if</span> (mRunnable != <span class="keyword">null</span>) {
+           mRunnable.run();
+       }
+  }
+</code></pre><p> 我们看最直接的这句代码   mRequest.deliverResponse(mResponse.result); 我们调用了 Request的中的一个方法（这个方法，依然是要我们自己实现！）。接着，我们在看 ExecutorDelivery 的构造函数时，我们就会豁然开朗！数据终于到了 UI线程了！</p>
+<h5 id="至此_volley_框架的整体流程分析完毕！！！！">至此 volley 框架的整体流程分析完毕！！！！</h5><h5 id="还在说几句：volley_框架的架构设计非常优美！扩展性极高！这个大概得益于_volley_面向接口的设计方案吧！面向接口的架构设计_也是我不断努力的方向！！！！">还在说几句：volley 框架的架构设计非常优美！扩展性极高！这个大概得益于 volley 面向接口的设计方案吧！面向接口的架构设计 也是我不断努力的方向！！！！</h5>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/06/01/第九篇-Volley 源码分析/" data-id="ciacnw8f100083bm9j4hnzd9y" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/volley-源码/">volley 源码</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-第三篇-android ViewPager页面切换特效" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/06/01/第三篇-android ViewPager页面切换特效/" class="article-date">
+  <time datetime="2015-05-31T16:15:03.000Z" itemprop="datePublished">2015-06-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Android应用开发/">Android应用开发</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/06/01/第三篇-android ViewPager页面切换特效/">ViewPager页面切换特效如下效果</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="ViewPager页面切换特效如下效果">ViewPager页面切换特效如下效果</h1><p>看效果：</p>
+<p>效果1：<img src="http://ww3.sinaimg.cn/large/a174c633gw1ereou4x741g20a006owsp.gif" alt="效果1"></p>
+<p>效果2：<img src="http://ww3.sinaimg.cn/large/a174c633gw1ereozpibuog20a006o166.gif" alt="效果2"></p>
+<h1 id="下面就开始讲解如何实现这两个页面翻转效果">下面就开始讲解如何实现这两个页面翻转效果</h1><p>1.首先你得会ViewPager控件的使用(废话！现在还有人不会使用吗？？？！！)</p>
+<p>2.你得了解ViewPager的一个回调函数ViewPager.PageTransformer(用于设置ViewPager切换时的动画效果),我们页面切换特效基本就靠他了。</p>
+<p>3.你得了解属性动画(这一部分我会在以后的博文中讲到，读者也可以去读其他的文章，百度一下一大推)</p>
+<p>当上面的都掌握了，你基本写出任何页面转换特效出来了！我只是拿两个做案列</p>
+<h1 id="代码实现">代码实现</h1><h5 id="一-页面布局+初始化ViewPager(这边我直接上代码了，不细说了！太简单了)">一.页面布局+初始化ViewPager(这边我直接上代码了，不细说了！太简单了)</h5><p>简单布局：<img src="http://ww4.sinaimg.cn/large/a174c633gw1erepbqllsaj20is0563zn.jpg" alt="简单布局"></p>
+<p>初始化ViewPager：<img src="http://ww2.sinaimg.cn/large/a174c633gw1erepew19ytj20j10d177u.jpg" alt="初始化ViewPager"></p>
+<p>ViewPager的适配器代码：<img src="http://ww2.sinaimg.cn/large/a174c633gw1erepgfieumj20k10d3wh8.jpg" alt=""></p>
+<p>至此，我们的准备工作都已经OK! 下面就是真正的干货了！！！</p>
+<h5 id="二-了解ViewPager-PageTransformer(用于设置ViewPager切换时的动画效果)这个这个回调函数">二.了解ViewPager.PageTransformer(用于设置ViewPager切换时的动画效果)这个这个回调函数</h5><p>   1.首先我们看一下这个函数ViewPager.PageTransformer：<br>    <img src="http://ww1.sinaimg.cn/large/a174c633gw1erepl33l5yj20kn02eglr.jpg" alt="函数"><br>    这个函数有两个参数一个是View 还有一个是position。我先解释下这个position，首先呢他的有效取值范围在[-1，1]<br>  我们就是根据这个值的变化来不停的改变view的相应的属性，以此达到相应的页面转换效果！下面 我就以一张图的形式来解释下view和position之间的关系 大家看一下图解就明白了！<br>    <img src="http://ww1.sinaimg.cn/large/a174c633gw1ereqa14p67j20hv0dhab7.jpg" alt="图解"></p>
+<p>  说白了就是我在[0,-1)的时候操作A页面  在[1,0)操作B页面 此时页面对应这个函数中的view变量 当[0.-1)时view是A页面 当[1,0)时view是B页面</p>
+<p>   2.下面就是开始分析第一个效果，我们可以到的是 A页面沿着X轴缩小 B页面沿X轴放大<br>     看代码：<br>     <img src="http://ww2.sinaimg.cn/large/a174c633gw1ereqffqm08j20h609l3zz.jpg" alt="代码"></p>
+<p>   接着我们再来分析第二个效果，我们看出是沿着Y旋转180度</p>
+<p>   看代码<br>  <img src="http://ww1.sinaimg.cn/large/a174c633gw1ereqia0jsyj20ht082tah.jpg" alt="代码"></p>
+<p>  该段代码中我们设置View的旋转中心是： <br><br>  page.setPivotY(page.getMeasuredHeight() / 2);<br><br>  page.setPivotX(page.getMeasuredWidth() / 2);<br><br>  A页面Y轴旋转：[0,-180)<br><br>  B页面Y轴旋转：[180,0)<br><br>  至此，已经讲解完成了！！</p>
+<h1 id="总结">总结</h1><p>读者只要了解了ViewPager.PageTransformer这个回调函数基本上页面切换特效已经掌握了！关于这个函数要了解的就是view和position之间的关系。了解两者之间的关系 该函数你就已经了解！其次就是属性动画的功底(不在本篇文章之内)！<br>我还在强调一次就是：position可以用变化范围[-1,1] 他与View的对应的关系是:将设ViewPager中的一二两业分别对应A页，B页。那么AB两页对应的position变化就是：A[ 0, -1) B[ 1 , 0 ).读者了解这个关系之后一切问题就迎刃而解了！！！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/06/01/第三篇-android ViewPager页面切换特效/" data-id="ciacnw8f200093bm96y67985a" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ViewPager/">ViewPager</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-第七篇-android 切换主题以及换肤的实现" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/06/01/第七篇-android 切换主题以及换肤的实现/" class="article-date">
+  <time datetime="2015-05-31T16:14:43.000Z" itemprop="datePublished">2015-06-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Android应用开发/">Android应用开发</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2015/06/01/第七篇-android 切换主题以及换肤的实现/">Android 切换主题以及换肤的实现</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Android_切换主题以及换肤的实现">Android 切换主题以及换肤的实现</h1><h2 id="一-介绍">一.介绍</h2><p><br><br>现在市面上有很多 APP 有切换主题和皮肤的功能！特别是阅读类的 APP！</p>
+<p><img src="http://ww1.sinaimg.cn/large/a174c633gw1es2vaujxqlj20c50lata9.jpg" alt="图片"></p>
+<p><img src="http://ww1.sinaimg.cn/large/a174c633gw1es2vb5g9j7j20c50ldmyh.jpg" alt="图片"></p>
+<p>上面两张图分别是 知乎 APP 和Fuubo APP的两张截图！都带有切换主题的功能！！无疑，增加了这个功能可以是我们的 APP 有更好的用户体验！更风骚的展现方式！！好了，下面我就以我现在正在做的开源的 博客园 APP 为例，先为大家讲解一下切换主题的功能！！</p>
+<p>下面先来看张效果图:<br><img src="http://ww2.sinaimg.cn/large/a174c633gw1eryypqjiujg20b40hs4qq.gif" alt="动态图"><br><br></p>
+<h2 id="二-思路以及实现">二.思路以及实现</h2><h3 id="2-1_主题的切换以及实现">2.1 主题的切换以及实现</h3><p><br></p>
+<p>首先我们先来明确个概念，现在我所说的切换主题，就切换整个app的颜色风格，当然也有少部分的图片的切换。注意哦 我这边说的是少部分图片哦！如果是大面积的换图片的吧！那就不是切换主题了而是换肤了！好了，咱们言归正传。既然要切换主题，那首先我们得有多套主题。好了，那我们首先来定义两套主题。直接看代码</p>
+<p><img src="http://ww1.sinaimg.cn/large/a174c633gw1es2w3pk5ghj20n50b7437.jpg" alt="代码"></p>
+<p>好了目前为止，我们已经准备好了主题了！但是，有些读者可以能已经看到这是什么鬼？</p>
+<pre><code>&lt;<span class="property">item</span> <span class="property">name</span>=<span class="string">"textLight"</span>&gt;@android:color/white&lt;/<span class="property">item</span>&gt;
+&lt;<span class="property">item</span> <span class="property">name</span>=<span class="string">"appbg"</span>&gt;@color/colorPrimaryDarkNight&lt;/<span class="property">item</span>&gt;
+&lt;<span class="property">item</span> <span class="property">name</span>=<span class="string">"textNight"</span>&gt;@color/gray&lt;/<span class="property">item</span>&gt;
+</code></pre><p>这三行是什么鬼！！他们并不是android自由的属性！他们是我自定义的属性！！要问有什么用？马上告诉你！！</p>
+<p>首先先来看下这三个属性的代码：<br><img src="http://ww1.sinaimg.cn/large/a174c633gw1es2wq2jpmxj20jy02n0t6.jpg" alt="图片"><br>这就是三个属性的定义啦！！<br>好啦！定义完之后，我们在xml的布局中就可以！要使用顶属性只要在代码中这么引用就行啦</p>
+<pre><code><span class="label">android:</span>background=<span class="string">"?attr/appbg"</span>
+</code></pre><p>这样背景色就自动转换成了你设置的这个属性值啦！现在我们要做的就是把要在更改主题的时候变换颜色的控件的背景色或者<br>字的颜色亦或其他…引用的属性的值就好了！当让这些值在定义Theme的时候要设置好！这里的自定义属性的可控性比较大！随<br>用户自己弄！！！</p>
+<p>现在还剩最后一个问题就是如何设置Theme啦！！！！那么又如何设置Theme了！！别急！activity 为我们提供了一个方法那就是 setTheme(int id) 方法！那有人就说啦！那好办！只要在要设置的属性的时候调用这个方法就行啦！我很遗憾的告诉你不行哦！这个要在 setContentView(int id) 之前调用！！！！！！！那怎吧呢！很简单啊？就是重启当前Activity就行啦！！现在我们还得处理一个问题：就是处理那些 “过时” 的 activity ! 我这里提供的方法是 清空我们的 back stack。<br>直接看代码：<br><img src="http://ww2.sinaimg.cn/large/a174c633gw1es2xhb8p32j20ni02jwf3.jpg" alt="代码"></p>
+<p>好了，现在就可以啦！！当然还是有细节要处理的！比如说在我的这个开源项目中：MainActivity—&gt;SettingActity！也就是说 当我换主题之后 我的 MainActivity 也就 GG 了！！所以当我从这个页面返回的时候 我是直接跳转的这个 MainActivity中的！所以这个就会引发一个问题 就是当我 不设置主题的时候！我返回的时候，就会有两个 MainActivity在栈中，所以现在就用到activity的启动模式啦！我是用的 singleTask！！不了解的这个模式的童鞋！可以自行百度哦！！！</p>
+<p>好了 切换Theme的讲解就到此结束！！！</p>
+<h3 id="2-2_皮肤的切换">2.2 皮肤的切换</h3><p><br><br>如果到了换肤的阶段 就不适合用上面的方法啦！！因为你不可能在 APK 中放入很多套皮肤！这个会让 APK 变的很大很大！得不偿失呀！目前，我公司项目的做法是：从网络端获取皮肤压缩包！！在本地 APK 中异步下载下来之后，解压缩！得到一个文件包！里面的所有文件的名字和本地 APK 是一样的！这时候很简单啦！我们先保存个标志位—表示引用的是哪套皮肤就行啦！此时，我还用到了EventBus这个通信框架！在每个需要改变的皮肤的 Activity 中注册EventBus! 当在设置发出通知后，每个页面能做出更新！！这个思路！！还有一个比较就是有些控件的背景是是selector或者其他的！！这个就需要解析xml文件了！分别读到与之对应的drawable文件之后在组合用的是这个类：StateListDrawable ！注意到这点就行啦 ！！其他的都很简单了！！这块我就不提供代码啦！！！！</p>
+<h2 id="结束">结束</h2><h3 id="最后还是希望大家_关注_/_start_一下我博客园客户端的开源项目_：">最后还是希望大家 关注 / start 一下我博客园客户端的开源项目 ：</h3><h1 id="github地址">github地址</h1><p><a href="https://github.com/yjxandroid/CNBlog" target="_blank" rel="external">地址</a></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/06/01/第七篇-android 切换主题以及换肤的实现/" data-id="ciacnw8f4000a3bm95ukv22lh" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/主题切换/">主题切换</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+  
+    <nav id="page-nav">
+      <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/">Next &raquo;</a>
+    </nav>
+  
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android应用开发/">Android应用开发</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Volley-源码分析/">Volley 源码分析</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/思考/">思考</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ListView/">ListView</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ViewPager/">ViewPager</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/volley-源码/">volley 源码</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/主题切换/">主题切换</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/缓存/">缓存</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ListView/" style="font-size: 10px;">ListView</a><a href="/tags/ViewPager/" style="font-size: 10px;">ViewPager</a><a href="/tags/volley-源码/" style="font-size: 10px;">volley 源码</a><a href="/tags/主题切换/" style="font-size: 10px;">主题切换</a><a href="/tags/缓存/" style="font-size: 20px;">缓存</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a><span class="archive-list-count">11</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2015/06/01/第四篇-android RecyclerView下拉隐藏Toolbar,上拉显示/">RecyclerView下拉隐藏Toolbar,上拉显示</a>
+          </li>
+        
+          <li>
+            <a href="/2015/06/01/第十篇-android 中替代 sharedpreferences 工具类的实现/">Android 中替代 sharedpreferences 工具类的实现</a>
+          </li>
+        
+          <li>
+            <a href="/2015/06/01/第十一篇-android_design_support_library 中控件的使用简单介绍/">Android Design Support Library 中控件的使用简单介绍（一）</a>
+          </li>
+        
+          <li>
+            <a href="/2015/06/01/第六篇-android 波浪形view的制作/">android 波浪形View的实现</a>
+          </li>
+        
+          <li>
+            <a href="/2015/06/01/第八篇-volley 的简单使用以及自定义Request/">Volley 的使用以及自定义Request</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>

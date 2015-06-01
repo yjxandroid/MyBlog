@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Volley 的使用以及自定义Request | YJX&#39;S Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="Volley 的使用以及自定义Request一.什么是 Volley
+2013年Google I/O大会上推出了一个新的网络通信框架。Volley是Android平台上的网络通信库，能使网络通信更快，更简单，更健壮。Volley特别适合数据量不大但是通信频繁的场景。
+二.使用1. 简单请求现在，我访问百度首页通过 Volley 提供给我的 Request—&amp;gt;StringRequest()从图">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Volley 的使用以及自定义Request">
+<meta property="og:url" content="http://yoursite.com/2015/06/01/第八篇-volley 的简单使用以及自定义Request/index.html">
+<meta property="og:site_name" content="YJX'S Blog">
+<meta property="og:description" content="Volley 的使用以及自定义Request一.什么是 Volley
+2013年Google I/O大会上推出了一个新的网络通信框架。Volley是Android平台上的网络通信库，能使网络通信更快，更简单，更健壮。Volley特别适合数据量不大但是通信频繁的场景。
+二.使用1. 简单请求现在，我访问百度首页通过 Volley 提供给我的 Request—&amp;gt;StringRequest()从图">
+<meta property="og:image" content="http://ww2.sinaimg.cn/large/a174c633gw1es6ceu5bpqj20ui077mz3.jpg">
+<meta property="og:image" content="http://ww2.sinaimg.cn/large/a174c633gw1es6d66r3hzj20v009xtb6.jpg">
+<meta property="og:image" content="http://ww2.sinaimg.cn/large/a174c633gw1es6exo3vvqj20n90exn1e.jpg">
+<meta property="og:image" content="http://ww4.sinaimg.cn/large/a174c633gw1es6fuma60yj210p0injxn.jpg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Volley 的使用以及自定义Request">
+<meta name="twitter:description" content="Volley 的使用以及自定义Request一.什么是 Volley
+2013年Google I/O大会上推出了一个新的网络通信框架。Volley是Android平台上的网络通信库，能使网络通信更快，更简单，更健壮。Volley特别适合数据量不大但是通信频繁的场景。
+二.使用1. 简单请求现在，我访问百度首页通过 Volley 提供给我的 Request—&amp;gt;StringRequest()从图">
+  
+    <link rel="alternative" href="/atom.xml" title="YJX&#39;S Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+
+</head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">YJX&#39;S Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="q" value="site:http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-第八篇-volley 的简单使用以及自定义Request" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/06/01/第八篇-volley 的简单使用以及自定义Request/" class="article-date">
+  <time datetime="2015-05-31T16:17:18.000Z" itemprop="datePublished">2015-06-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Android应用开发/">Android应用开发</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Volley 的使用以及自定义Request
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Volley_的使用以及自定义Request">Volley 的使用以及自定义Request</h1><h2 id="一-什么是_Volley">一.什么是 Volley</h2><p><br></p>
+<p>2013年Google I/O大会上推出了一个新的网络通信框架。Volley是Android平台上的网络通信库，能使网络通信更快，更简单，更健壮。Volley特别适合数据量不大但是通信频繁的场景。</p>
+<h2 id="二-使用">二.使用</h2><h4 id="1-_简单请求">1. 简单请求</h4><p>现在，我访问百度首页通过 Volley 提供给我的 Request—&gt;StringRequest()<br><img src="http://ww2.sinaimg.cn/large/a174c633gw1es6ceu5bpqj20ui077mz3.jpg" alt="图片"><br>从图中，可以到 StringRequest 这个类需要我们提供—请求方式（是 get 还是 post）,请求地址，正确返回数据接口的回调和请求发生错误接口的回调！！<br><br><br>大家有可能注意到了，当我们写完请求之后，我们就像请求队列里添加了这个请求，之后请求就执行啦！！这只是GET请求！<br><br><br>那接下来，我给大家演示一下 post 的请求。请看图<br><img src="http://ww2.sinaimg.cn/large/a174c633gw1es6d66r3hzj20v009xtb6.jpg" alt="图片"><br>从图中大家可以看到了！我只是修改了一下请求方式，把 get 改成了 post! 另外，我重写了 Request 这个方法中的 getParams() 方法！那它是干什么用的呢？他就是返回我们的请求参数的！使用者只要把 key-value放入 HashMap中就行啦！<br><br><br>不知道，大家注意到没有！这两个请求我都调用了这个方法 request.setTag(“baidu”); 我为啥要调用这个方法嘞？其实是有原因的！在Volley框架中，我们可以给每个请求设置tag，这样我们就可以在 activity 或者 fragment 生命结束的时候（onDestory()）中在代用这个方法  queue.cancelAll(“baidu”); 这个就可以取消正在请求的请求了(当然tag要一致哦)。避免出现空指针异常！</p>
+<h4 id="2-自定义请求">2.自定义请求</h4><p>首先，我们来看一下 StringRequest 类的源码：<br><img src="http://ww2.sinaimg.cn/large/a174c633gw1es6exo3vvqj20n90exn1e.jpg" alt="图片"><br>从图中，我们可以看到，StringRequest 也是继承 Request<t> 这个泛型类的。继承这个类，我们要重写来两个方法<br>deliverResponse(String response) 和  parseNetworkResponse(NetworkResponse response) 这个两个方法具体做什么，我已在图中写了注释！其实很简单！如果，看懂了这个，我们就可以自己写 Request 了！在这个我还说明一下<br>NetworkResponse 这个类中包含了服务器返回的结果，返回头等。其中的 response.data 这个是一个 byte 数组！<br>response.headers 这个是请求头数据！ HttpHeaderParser.parseCharset(response.headers) 这个就是服务器返回的编码方式！之后就是简单的 new 个字符串了！<br><br></t></p>
+<p>————————————————————-开始自定义喽——————————————————-</p>
+<p>大家在平时的开发中和服务器的数据交互一般都是 json 格式的数据！那么现在就来自定义个 JSONRequest 请求！我先直接上代码<br><img src="http://ww4.sinaimg.cn/large/a174c633gw1es6fuma60yj210p0injxn.jpg" alt="代码"><br>可以看到，JSONRequest  是继承自 Request 类的。在parseNetworkResponse()方法中，先是将服务器响应的数据解析出来，然后通过调用 FastJson 的 parseObject 方法将数据组装成对象。在deliverResponse方法中仍然是将最终的数据进行回调.</p>
+<p><br><br>在这里，我想先说一下我在继承 Request 时比较常覆写的几个方法以及它们的含义！<br><br></p>
+<p>Map<string, string=""> getParams();用来返回请求参数的。<br><br></string,></p>
+<p>Map<string, string=""> getHeaders();用来返回请求头的！我们可以用来返回指定的请求头！<br><br></string,></p>
+<p>RetryPolicy getRetryPolicy();用来返回超市时间的！<br><br></p>
+<p>String getParamsEncoding();用来返回请求数据的编码的！</p>
+<h2 id="好了至此。Volley_的讲解就此完了！！接下的博文_我就开始写_Volley_了！第一次说源码方面的东西～～～">好了至此。Volley 的讲解就此完了！！接下的博文 我就开始写 Volley 了！第一次说源码方面的东西～～～</h2>
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/06/01/第八篇-volley 的简单使用以及自定义Request/" data-id="ciacnw8eq00053bm9ibsfb7u4" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/06/01/第六篇-android 波浪形view的制作/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          android 波浪形View的实现
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/06/01/第五篇-记一次androidd登陆页面的实现/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">记一次 android 登陆页面的实现</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android应用开发/">Android应用开发</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Volley-源码分析/">Volley 源码分析</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/思考/">思考</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ListView/">ListView</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ViewPager/">ViewPager</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/volley-源码/">volley 源码</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/主题切换/">主题切换</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/缓存/">缓存</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ListView/" style="font-size: 10px;">ListView</a><a href="/tags/ViewPager/" style="font-size: 10px;">ViewPager</a><a href="/tags/volley-源码/" style="font-size: 10px;">volley 源码</a><a href="/tags/主题切换/" style="font-size: 10px;">主题切换</a><a href="/tags/缓存/" style="font-size: 20px;">缓存</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a><span class="archive-list-count">11</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2015/06/01/第四篇-android RecyclerView下拉隐藏Toolbar,上拉显示/">RecyclerView下拉隐藏Toolbar,上拉显示</a>
+          </li>
+        
+          <li>
+            <a href="/2015/06/01/第十篇-android 中替代 sharedpreferences 工具类的实现/">Android 中替代 sharedpreferences 工具类的实现</a>
+          </li>
+        
+          <li>
+            <a href="/2015/06/01/第十一篇-android_design_support_library 中控件的使用简单介绍/">Android Design Support Library 中控件的使用简单介绍（一）</a>
+          </li>
+        
+          <li>
+            <a href="/2015/06/01/第六篇-android 波浪形view的制作/">android 波浪形View的实现</a>
+          </li>
+        
+          <li>
+            <a href="/2015/06/01/第八篇-volley 的简单使用以及自定义Request/">Volley 的使用以及自定义Request</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>

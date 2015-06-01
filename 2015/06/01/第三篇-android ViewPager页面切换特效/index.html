@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>ViewPager页面切换特效如下效果 | YJX&#39;S Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="ViewPager页面切换特效如下效果看效果：
+效果1：
+效果2：
+下面就开始讲解如何实现这两个页面翻转效果1.首先你得会ViewPager控件的使用(废话！现在还有人不会使用吗？？？！！)
+2.你得了解ViewPager的一个回调函数ViewPager.PageTransformer(用于设置ViewPager切换时的动画效果),我们页面切换特效基本就靠他了。
+3.你得了解属性动画(这一部分我会">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ViewPager页面切换特效如下效果">
+<meta property="og:url" content="http://yoursite.com/2015/06/01/第三篇-android ViewPager页面切换特效/index.html">
+<meta property="og:site_name" content="YJX'S Blog">
+<meta property="og:description" content="ViewPager页面切换特效如下效果看效果：
+效果1：
+效果2：
+下面就开始讲解如何实现这两个页面翻转效果1.首先你得会ViewPager控件的使用(废话！现在还有人不会使用吗？？？！！)
+2.你得了解ViewPager的一个回调函数ViewPager.PageTransformer(用于设置ViewPager切换时的动画效果),我们页面切换特效基本就靠他了。
+3.你得了解属性动画(这一部分我会">
+<meta property="og:image" content="http://ww3.sinaimg.cn/large/a174c633gw1ereou4x741g20a006owsp.gif">
+<meta property="og:image" content="http://ww3.sinaimg.cn/large/a174c633gw1ereozpibuog20a006o166.gif">
+<meta property="og:image" content="http://ww4.sinaimg.cn/large/a174c633gw1erepbqllsaj20is0563zn.jpg">
+<meta property="og:image" content="http://ww2.sinaimg.cn/large/a174c633gw1erepew19ytj20j10d177u.jpg">
+<meta property="og:image" content="http://ww2.sinaimg.cn/large/a174c633gw1erepgfieumj20k10d3wh8.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/a174c633gw1erepl33l5yj20kn02eglr.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/a174c633gw1ereqa14p67j20hv0dhab7.jpg">
+<meta property="og:image" content="http://ww2.sinaimg.cn/large/a174c633gw1ereqffqm08j20h609l3zz.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/a174c633gw1ereqia0jsyj20ht082tah.jpg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ViewPager页面切换特效如下效果">
+<meta name="twitter:description" content="ViewPager页面切换特效如下效果看效果：
+效果1：
+效果2：
+下面就开始讲解如何实现这两个页面翻转效果1.首先你得会ViewPager控件的使用(废话！现在还有人不会使用吗？？？！！)
+2.你得了解ViewPager的一个回调函数ViewPager.PageTransformer(用于设置ViewPager切换时的动画效果),我们页面切换特效基本就靠他了。
+3.你得了解属性动画(这一部分我会">
+  
+    <link rel="alternative" href="/atom.xml" title="YJX&#39;S Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" type="text/css">
+  
+
+</head>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">YJX&#39;S Blog</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="q" value="site:http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-第三篇-android ViewPager页面切换特效" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2015/06/01/第三篇-android ViewPager页面切换特效/" class="article-date">
+  <time datetime="2015-05-31T16:15:03.000Z" itemprop="datePublished">2015-06-01</time>
+</a>
+    
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Android应用开发/">Android应用开发</a>
+  </div>
+
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      ViewPager页面切换特效如下效果
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="ViewPager页面切换特效如下效果">ViewPager页面切换特效如下效果</h1><p>看效果：</p>
+<p>效果1：<img src="http://ww3.sinaimg.cn/large/a174c633gw1ereou4x741g20a006owsp.gif" alt="效果1"></p>
+<p>效果2：<img src="http://ww3.sinaimg.cn/large/a174c633gw1ereozpibuog20a006o166.gif" alt="效果2"></p>
+<h1 id="下面就开始讲解如何实现这两个页面翻转效果">下面就开始讲解如何实现这两个页面翻转效果</h1><p>1.首先你得会ViewPager控件的使用(废话！现在还有人不会使用吗？？？！！)</p>
+<p>2.你得了解ViewPager的一个回调函数ViewPager.PageTransformer(用于设置ViewPager切换时的动画效果),我们页面切换特效基本就靠他了。</p>
+<p>3.你得了解属性动画(这一部分我会在以后的博文中讲到，读者也可以去读其他的文章，百度一下一大推)</p>
+<p>当上面的都掌握了，你基本写出任何页面转换特效出来了！我只是拿两个做案列</p>
+<h1 id="代码实现">代码实现</h1><h5 id="一-页面布局+初始化ViewPager(这边我直接上代码了，不细说了！太简单了)">一.页面布局+初始化ViewPager(这边我直接上代码了，不细说了！太简单了)</h5><p>简单布局：<img src="http://ww4.sinaimg.cn/large/a174c633gw1erepbqllsaj20is0563zn.jpg" alt="简单布局"></p>
+<p>初始化ViewPager：<img src="http://ww2.sinaimg.cn/large/a174c633gw1erepew19ytj20j10d177u.jpg" alt="初始化ViewPager"></p>
+<p>ViewPager的适配器代码：<img src="http://ww2.sinaimg.cn/large/a174c633gw1erepgfieumj20k10d3wh8.jpg" alt=""></p>
+<p>至此，我们的准备工作都已经OK! 下面就是真正的干货了！！！</p>
+<h5 id="二-了解ViewPager-PageTransformer(用于设置ViewPager切换时的动画效果)这个这个回调函数">二.了解ViewPager.PageTransformer(用于设置ViewPager切换时的动画效果)这个这个回调函数</h5><p>   1.首先我们看一下这个函数ViewPager.PageTransformer：<br>    <img src="http://ww1.sinaimg.cn/large/a174c633gw1erepl33l5yj20kn02eglr.jpg" alt="函数"><br>    这个函数有两个参数一个是View 还有一个是position。我先解释下这个position，首先呢他的有效取值范围在[-1，1]<br>  我们就是根据这个值的变化来不停的改变view的相应的属性，以此达到相应的页面转换效果！下面 我就以一张图的形式来解释下view和position之间的关系 大家看一下图解就明白了！<br>    <img src="http://ww1.sinaimg.cn/large/a174c633gw1ereqa14p67j20hv0dhab7.jpg" alt="图解"></p>
+<p>  说白了就是我在[0,-1)的时候操作A页面  在[1,0)操作B页面 此时页面对应这个函数中的view变量 当[0.-1)时view是A页面 当[1,0)时view是B页面</p>
+<p>   2.下面就是开始分析第一个效果，我们可以到的是 A页面沿着X轴缩小 B页面沿X轴放大<br>     看代码：<br>     <img src="http://ww2.sinaimg.cn/large/a174c633gw1ereqffqm08j20h609l3zz.jpg" alt="代码"></p>
+<p>   接着我们再来分析第二个效果，我们看出是沿着Y旋转180度</p>
+<p>   看代码<br>  <img src="http://ww1.sinaimg.cn/large/a174c633gw1ereqia0jsyj20ht082tah.jpg" alt="代码"></p>
+<p>  该段代码中我们设置View的旋转中心是： <br><br>  page.setPivotY(page.getMeasuredHeight() / 2);<br><br>  page.setPivotX(page.getMeasuredWidth() / 2);<br><br>  A页面Y轴旋转：[0,-180)<br><br>  B页面Y轴旋转：[180,0)<br><br>  至此，已经讲解完成了！！</p>
+<h1 id="总结">总结</h1><p>读者只要了解了ViewPager.PageTransformer这个回调函数基本上页面切换特效已经掌握了！关于这个函数要了解的就是view和position之间的关系。了解两者之间的关系 该函数你就已经了解！其次就是属性动画的功底(不在本篇文章之内)！<br>我还在强调一次就是：position可以用变化范围[-1,1] 他与View的对应的关系是:将设ViewPager中的一二两业分别对应A页，B页。那么AB两页对应的position变化就是：A[ 0, -1) B[ 1 , 0 ).读者了解这个关系之后一切问题就迎刃而解了！！！</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2015/06/01/第三篇-android ViewPager页面切换特效/" data-id="ciacnw8f200093bm96y67985a" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/ViewPager/">ViewPager</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/06/01/第九篇-Volley 源码分析/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Volley 源码分析
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2015/06/01/第七篇-android 切换主题以及换肤的实现/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Android 切换主题以及换肤的实现</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android应用开发/">Android应用开发</a><span class="category-list-count">9</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Volley-源码分析/">Volley 源码分析</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/思考/">思考</a><span class="category-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list"><li class="tag-list-item"><a class="tag-list-link" href="/tags/ListView/">ListView</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/ViewPager/">ViewPager</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/volley-源码/">volley 源码</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/主题切换/">主题切换</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/缓存/">缓存</a><span class="tag-list-count">2</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/ListView/" style="font-size: 10px;">ListView</a><a href="/tags/ViewPager/" style="font-size: 10px;">ViewPager</a><a href="/tags/volley-源码/" style="font-size: 10px;">volley 源码</a><a href="/tags/主题切换/" style="font-size: 10px;">主题切换</a><a href="/tags/缓存/" style="font-size: 20px;">缓存</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2015/06/">June 2015</a><span class="archive-list-count">11</span></li></ul>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recents</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2015/06/01/第四篇-android RecyclerView下拉隐藏Toolbar,上拉显示/">RecyclerView下拉隐藏Toolbar,上拉显示</a>
+          </li>
+        
+          <li>
+            <a href="/2015/06/01/第十篇-android 中替代 sharedpreferences 工具类的实现/">Android 中替代 sharedpreferences 工具类的实现</a>
+          </li>
+        
+          <li>
+            <a href="/2015/06/01/第十一篇-android_design_support_library 中控件的使用简单介绍/">Android Design Support Library 中控件的使用简单介绍（一）</a>
+          </li>
+        
+          <li>
+            <a href="/2015/06/01/第六篇-android 波浪形view的制作/">android 波浪形View的实现</a>
+          </li>
+        
+          <li>
+            <a href="/2015/06/01/第八篇-volley 的简单使用以及自定义Request/">Volley 的使用以及自定义Request</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2015 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css" type="text/css">
+  <script src="/fancybox/jquery.fancybox.pack.js" type="text/javascript"></script>
+
+
+<script src="/js/script.js" type="text/javascript"></script>
+
+  </div>
+</body>
+</html>
